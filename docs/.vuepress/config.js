@@ -131,6 +131,14 @@ module.exports = {
         //   ]
         // },
         {
+          title: 'GIT教程',
+          collapsable: true,
+          sidebarDepth: 2, 
+          children: [
+            ['../pages/Git/git学习','GIT教程'],
+          ]
+        },
+        {
           title: '琐碎',
           collapsable: true,
           sidebarDepth: 2, 
