@@ -6,7 +6,7 @@ module.exports = {
   ],
   //下面涉及到的md文件和其他文件的路径下一步再详细解释
   themeConfig: {
-    lastUpdated: 'Last Updated', // 文档更新时间：每个文件git最后提交的时间
+    lastUpdated: '最后更新于', // 文档更新时间：每个文件git最后提交的时间
     logo: '/avatar.png',  //网页顶端导航栏左上角的图标
 
     //顶部导航栏
@@ -135,7 +135,15 @@ module.exports = {
           collapsable: true,
           sidebarDepth: 2, 
           children: [
-            ['../pages/Git/git学习','GIT教程'],
+            ['../pages/Git/git学习.md','GIT教程'],
+          ]
+        },
+        {
+          title: '实习遇到的问题及成长',
+          collapsable: true,
+          sidebarDepth: 2, 
+          children: [
+            ['../pages/Intern/实习遇到的问题与成长.md','实习遇到的问题及成长'],
           ]
         },
         {
@@ -143,7 +151,7 @@ module.exports = {
           collapsable: true,
           sidebarDepth: 2, 
           children: [
-            ['../pages/suosui/CommandJS.md','前端模块化'],
+            // ['../pages/suosui/CommandJS.md','前端模块化'],
             ['../pages/suosui/设计模式.md','设计模式'],
             ['../pages/suosui/前端渲染&后端渲染.md','前端渲染&后端渲染'],
           ]
