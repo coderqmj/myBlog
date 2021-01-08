@@ -139,6 +139,14 @@ module.exports = {
           ]
         },
         {
+          title: 'TypeScript',
+          collapsable: true,
+          sidebarDepth: 2, 
+          children: [
+            ['../pages/TypeScript/TypeScript.md','TypeScript笔记'],
+          ]
+        },
+        {
           title: '实习遇到的问题及成长',
           collapsable: true,
           sidebarDepth: 2, 
