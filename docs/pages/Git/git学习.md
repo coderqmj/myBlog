@@ -55,6 +55,13 @@ git push origin --delete [branchname]
 3.
 ```
 
+#### 合并分支
+
+- 首先提交开发分支
+- 切换到需要合并的分支上，如test
+- git merge 开发分支。
+- 更新远程test分支。
+
 ### git开发流程
 
 ```

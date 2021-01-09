@@ -577,3 +577,14 @@ function bar() {
 bar() // global 定义的时候决定的
 ```
 
+### 46.加载海量数据
+
+```
+1.缩短循环时间
+	requestAniminationFrame通过分治的思想，将 100000 个 li 分批插入到页面中，并且我们通过 requestAniminationFrame 在页面重绘前插入新节点
+2.减少DOM操作次数
+	DocumentFragment（MDN）可以减少DOM操作次数，降低回流对性能的影响。
+	时间委托可以显著减少DOM操作次数
+
+```
+
