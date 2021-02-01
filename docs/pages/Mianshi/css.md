@@ -112,13 +112,25 @@ HTML代码:
 
 后两个脱离了文档流，第一个以自身为基准，第二个以最近的非静态祖先元素为基准，第三个以视口为基准。
 
-### 3. CSS的animation 、 transform 了解吗? CSS动画和JS动画的区别？
+### 3. CSS的animation 、 transform? CSS动画和JS动画的区别？
 
  transform ：
 
 -  rotate 旋转/ scale 变形大小/translate(移动)
 
 animation ：
+
+```
+animation-name: 定义动画的名称，也可以all
+animation-duration：执行多长时间
+animation-timing-function：
+delay：延迟多久执行
+count：执行多少次
+direction：执行方向
+等等
+```
+
+
 
 ```css
  animation: changebox 1s ease-in-out 1s infinite alternate running forwards;
@@ -430,5 +442,11 @@ CSS放头部，在加载html生成DOM tree的时候，就可以同时对DOM tree
 ```
 1.单行：
 	1.overflow: hidden; + text-overflow: ellipsis;
+```
+
+### 26.实现轮播图
+
+```
+
 ```
 

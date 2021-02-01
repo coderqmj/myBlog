@@ -64,6 +64,7 @@ module.exports = {
             ['../pages/JavaScript/跨域方法及原理.md', '跨域方法及原理'],
             ['../pages/JavaScript/axios二次封装.md', 'axios二次封装'],
             ['../pages/JavaScript/JS垃圾回收机制.md', 'JS垃圾回收机制'],
+            ['../pages/JavaScript/解剖Map对象.md', '解剖Map对象'],
           ]
         },
         {
