@@ -450,3 +450,13 @@ CSS放头部，在加载html生成DOM tree的时候，就可以同时对DOM tree
 
 ```
 
+### 27.css规范
+
+```
+命名规范：
+	bem(Block, Element, Modifier):
+		通过__链接block与element，通过--链接修饰词
+		优点：确保了唯一性，以防样式覆盖等问题
+		缺点：命名语句过长
+```
+
