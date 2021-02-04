@@ -44,6 +44,7 @@ module.exports = {
             ['../pages/ComputerNet/HTTPS.md', 'HTTPS'], 
             ['../pages/ComputerNet/浏览器安全.md', '浏览器安全'], 
             ['../pages/ComputerNet/浏览器性能优化.md', '浏览器性能优化'], 
+            ['../pages/ComputerNet/JavaScript如何影响DOM树构建.md', 'JavaScript如何影响DOM树构建'], 
           ]
         },
         {
