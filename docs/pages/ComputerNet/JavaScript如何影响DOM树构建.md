@@ -56,4 +56,36 @@
 - 遇到JS之前，就和上面解析的流程一样。
 - 但是解析到script标签，渲染引擎判断这是一段脚本，HTML解析器就会暂停DOM的解析
 - 暂停的原因是 **接下来JS可能会修改当前已经生成的DOM结构**
+- 这个时候HTML解析器暂停工作，JavaScript引擎介入。
+- JavaScript执行完后，HTML解析器恢复解析过程，解析后续过程，生成DOM
+
+#### 2.两个div中引入JavaScript文件
+
+- 遇到js前一样解析，遇到后暂定解析，执行js代码，但是要先下载代码
+- 但是下载js代码时会阻塞DOM解析，通常会受到网络环境，js文件大小影响
+- 但是Chrome做了很多优化，**预解析操作**
+  - 渲染引擎收到字节流后，开启预解析线程，用于分析HTML文件是否包含JavaScript、css等相关文件
+  - 解析到先关文件后，预解析线程会提前下载
+
+#### 3.优化影响
+
+- 已经明确了，js的确阻塞DOM，但是也有一些对策
+- 使用CDN加速JS文件加载，压缩JavaScript文件
+- 另外，如果JavaScript文件中**没有操作DOM代码**，可以将JavaScript脚本额**设置为异步加载**，通过**async或者defer**
+
+```html
+<script async type="text/javascript" src='foo.js'></script>
+<script defer type="text/javascript" src='foo.js'></script>
+```
+
+async 和 defer 虽然都是异步的，不过还有一些差异。
+
+async ：JS加载完成，会立即执行;
+
+ defer：需要在 DOMContentLoaded 事件之前执行。
+
+#### 4.css阻塞JS
+
+- 因为js可能会操作CSS，所以需要等待css解析成CSSOM才可以执行JS
+- 所以css可能会影响dom生成，一定会影响渲染
 
