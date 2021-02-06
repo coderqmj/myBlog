@@ -168,6 +168,7 @@ module.exports = {
             ['../pages/suosui/设计模式.md','设计模式'],
             ['../pages/suosui/前端渲染&后端渲染.md','前端渲染&后端渲染'],
             ['../pages/suosui/原生高度属性及区别.md','原生高度属性及区别'],
+            ['../pages/suosui/奇怪的知识点小技巧.md','奇怪的知识点小技巧'],
           ]
         },
         // {
