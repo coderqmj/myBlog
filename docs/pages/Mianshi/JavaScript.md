@@ -588,3 +588,11 @@ bar() // global 定义的时候决定的
 
 ```
 
+### 47.defer和sync区别
+
+```
+作用：两者的作用都是差不多的，使js异步加载，从而不会对DOM生成造成阻塞
+defer: 表示js脚本在DOMContentLoaded事件之前执行
+async：表示js脚本一旦加载完成，立即执行
+```
+

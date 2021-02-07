@@ -44,6 +44,7 @@ module.exports = {
             ['../pages/ComputerNet/HTTPS.md', 'HTTPS'], 
             ['../pages/ComputerNet/浏览器安全.md', '浏览器安全'], 
             ['../pages/ComputerNet/浏览器性能优化.md', '浏览器性能优化'], 
+            ['../pages/ComputerNet/HTTP请求流程.md', 'HTTP请求流程'], 
             ['../pages/ComputerNet/JavaScript如何影响DOM树构建.md', 'JavaScript如何影响DOM树构建'], 
             ['../pages/ComputerNet/CSS如何影响首次白屏.md', 'CSS如何影响首次白屏'], 
             ['../pages/ComputerNet/分层合成：为什么CSS比JS高效.md', '分层合成：为什么CSS比JS高效'], 

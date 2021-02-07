@@ -206,7 +206,46 @@ http无状态连接
 	4.响应体： 由用户自定义添加，如post的body等；
 ```
 
+### 12.HTTP请求流程
 
+```
+1.构建请求行，请求方法/请求URI/HTTP版本
+2.在本地查找缓存，有就拦截请求，返回该资源副本，减少服务器压力
+3.准备IP和端口：
+	1.通过DNS解析域名，得到IP
+	2.解析URL有无端口号，没有默认80
+4.等待TCP队列
+	1.一个域名6个连接，10个TCP请求的话，4个需要排队，少于6，则进入连接
+5.建立连接
+	三次握手
+6.发送HTTP请求
+	建立连接之后，浏览器就可以和服务器通信
+                              
+```
+
+### 13.HTTP响应流程   
+
+```
+1.返回请求
+ 处理好请求返回数据给浏览器
+2.关闭连接
+ 	一般情况下，直接关闭连接即可，但是如或有connection:keepAlive，就保持长连接，节省下一次的连接时间
+3.重定向
+```
+
+
+
+### 14.第二次打开网页保持登陆状态
+
+```
+1.使用了setCookie字段
+2.第一次登陆成功，后端生成用户身份的字符串，保存响应头setCookie中，返回给前端。
+3.浏览器解析响应头，遇到setCookie，保存在本地。
+4.再次访问时，就会读取本地setCookie信息，并且在请求头把它带上发送给服务器
+5。服务器验证，通过后把该用户的信息发送给浏览器
+```
+
+### 15.计算机网络模型
 
 ### 10.503
 
@@ -262,6 +301,28 @@ header/footer/article/nav/section/video/audio/canvas
 2.removeChild		删除节点
 3.replaceChild		替换几点		返回被替换节点
 4.hasChildNodes		是否有子节点	   返回布尔值
+```
+
+### 7.DOMContentLoaded和load区别
+
+```
+DOMContentLoaded：
+	当初始的HTML文档被完全加载和解析完成之后，DOMContentLoaded事件被触发，而无需等待样式表、图像和子框架的完全加载。
+load:
+	整个页面及所有依赖资源如样式表和图片都已完成加载时，将触发load事件。
+```
+
+### 8.HTML5新特性
+
+```
+1.语义化标签
+	header，footer，article，nav，audio，video
+2.2D/3D:
+	canvas，svg
+3.多媒体
+	audio、video
+4.离线存储
+	localStorage，sessionStorage，indexDB
 ```
 
 
