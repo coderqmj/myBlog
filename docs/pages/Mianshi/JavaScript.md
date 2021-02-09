@@ -596,3 +596,15 @@ defer: 表示js脚本在DOMContentLoaded事件之前执行
 async：表示js脚本一旦加载完成，立即执行
 ```
 
+### 48.async await原理
+
+```
+1.Promise 和 生成器的应用，往底层说就是微任务与协程的应用。
+2.async函数：异步执行和隐式返回promise
+	在里面的返回值都是 Promise {<resolved>: 返回的东西}
+3.await关键字：默认帮我们创建Promise对象
+	1.在里面executor函数中调用了resolve
+	2.然后JS引擎暂停当前协程执行，将主线程控制权给父协程执行，同时把promise对象返回给父协程
+	3.然后父协程调用promise.then来监控promise改变状态
+```
+

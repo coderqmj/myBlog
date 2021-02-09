@@ -100,6 +100,8 @@ module.exports = {
           sidebarDepth: 2, 
           children: [
             ['../pages/Node/学习笔记.md', 'NODE学习笔记'],
+            ['../pages/Node/Node源码阅读.md', 'Node源码阅读'],
+            ['../pages/Node/Koa和Express对比.md', 'Koa和Express对比'],
           ]
         },
         {
