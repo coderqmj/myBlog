@@ -412,6 +412,37 @@ CommonJS和ES6 ES6的区别：
 		编译时加载：ES6模块不是对象，而是通过export输出指定的代码，import采用静态命令的形式。在import是可以指定加载某个输出值，而不是整个模块
 ```
 
+### 35.CommonJs
+
+```
+commonjs:
+	1.里面通过module.exports/exports导出，通过require()导入。
+		require()是个函数，具有返回值，其返回值就是exports这个对象；
+	2.module.exports：
+		在commonjs规范里面是没有提到module.exports的。
+		是Node为了实现导出而实现的一个Module类，在源码里module.exports=exports，使这两个指向同一个对象
+		本质上就是module.exports在导出
+		但是如果你在模块里 module.exports = {}，module.exports就和exports断开联系了，最终导入的就是module.exports新对象
+	3.require(X)查找细节
+		情况一：X是核心模块，直接返回核心模块，停止查找
+		情况二：X是./ ../ /
+			第一步：X当做一个文件在对应目录下查找
+				1.有后缀名，按照后缀名进行查找对应文件
+				2.无后缀名，查找文件X=>查找X.js=>查找X.json=>查找X.node
+			第二步：X是一个目录
+				1.查找X/index.js=>index.json=>index.node
+			第三步：没找到返回 Not Found
+		情况三：直接是X，但X不是核心模块
+			在当前目录查找node_modules，然后上一层目录node_modules，直到根目录
+	4.模块加载过程
+		1）commonJs加载时同步的，加载完才会进行下一步代码
+		2）不会进行多次加载，index.js加载a.js和b.js a.js加载b.js:
+			则b.js只会被执行一次，module对象中的loaded被设置为true
+		3）模块相互依赖，是一个图结构，引用顺序是按照图的深度优先遍历的，即使循环引用，形成闭环，最终每个模块只会执行一次。
+```
+
+
+
 ### 36.防抖节流的区别
 
 ```

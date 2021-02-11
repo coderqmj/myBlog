@@ -507,7 +507,7 @@ load:
 	1.修改，但是未进行add
 		1.git checkout fileName 
 	2.多个地方进行add，但是只想提交一部分
-		1.$ git reset HEAD <filename>
+		1.$git reset HEAD <filename>
 	3.已经commit但是未提交
 		$ git commit --amend -m"说明"
 

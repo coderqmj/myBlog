@@ -190,3 +190,105 @@ ES6的模块不是对象，`import`命令会被 JavaScript 引擎静态分析，
 - 编译时加载: ES6 模块不是对象，而是通过 `export` 命令显式指定输出的代码，`import`时采用静态命令的形式。即在`import`时可以指定加载某个输出值，而不是加载整个模块，这种加载称为“编译时加载”。
 
 CommonJS 加载的是一个对象（即`module.exports`属性），该对象只有在脚本运行完才会生成。而 ES6 模块不是对象，它的对外接口只是一种静态定义，在代码静态解析阶段就会生成。
+
+## 一、CommonJs
+
+### 1.exports与require()
+
+- require是一个函数，它有返回值，返回值是exports
+- 所以导入的时候可以使用解构
+
+```
+// bar.js
+exports.name = 'qmj';
+exports.age = 18;
+
+// 导入
+const demo = require('./bar.js');
+demo = {
+	name: 'qmj',
+	age: 18
+}
+const {name, age} = require('./bar.js')
+```
+
+### 2.module.exports
+
+- 为什么有了exports还要有module.exports呢？
+- 其实CommonJS没有提到module.exports，但是Node中为了导出，实现了Module类，每个模块是Module的实例。
+- 真正导出的是 module.exports，在源码里 module.exports = exports;
+
+```js
+// 内部源码
+exports = {};
+module.exports = exports;
+这样做的目的是为了让module.exports和exports指向同一个对象；
+```
+
+
+
+### 3.require细节
+
+- require是一个函数，帮我们引入一个文件（模块）中导入的对象
+
+#### require的查找细节
+
+```
+导入格式如：require(X):
+
+情况一：X是一个核心模块
+	直接返回核心模块，并停止查找
+	
+情况二：X是./ ../或 /
+	第一步：将X当做一个文件在对应的目录下查找：
+		1.有文件后缀名，按照后缀名的格式查找对应的文件
+		2.无后缀名，会按照下面顺序：
+			1）直接查找文件X
+			2）查找X.js文件
+			3）查找X.json文件
+			4）查找X.node文件
+	第二步：X作为一个目录
+		1.查找目录下面的index文件
+			1）查找X/index.js文件
+			2）查找X/index.json文件
+			3）查找X/index.node文件
+	第三步：没有找到
+		1.报错Not Found
+		
+情况三：直接是X，X并不是一个核心模块
+	1.是在/Users/didi/Documents/Project/Node下编写文件main.js
+		1）/Users/didi/Documents/Project/Node/node_modules
+		2）/Users/didi/Documents/Project/node_modules
+		3）/Users/didi/Documents/node_modules
+		4）/Users/didi/node_modules
+		5）/Users/node_modules
+    6）/node_modules
+  2.上面这些还没找到就直接返回Not Found
+```
+
+### 4.模块的加载过程
+
+- commonJs加载是同步的，模块加载完之后才会进行下一步代码
+- 例子：先打印加载文件，再打印文本本身，
+
+```js
+// bar.js
+consloe.log('qmj')
+
+// index.js 
+require('./bar.js');
+console.log('hello world');
+// cmd node index.js
+// result => qmj hello world
+```
+
+- 模块在多次引入时，只会执行一次，因为被缓存
+  - 每个模块对象都有一个属性：loaded
+  - false表示没有加载，true表示已经加载
+- 模块被循环引用时，不会执行多次
+  - 这种情况是一种闭环，加载顺序是按照图的深度优先遍历加载的
+  - main=>aaa=>ccc=>ddd=>eee=>bbb
+  - 之所以bbb后面不会加载ccc是因为ccc的loaded被设置为true了
+
+<img src="./images/require_01.png" style="zoom:50%;" />
+
