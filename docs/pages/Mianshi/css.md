@@ -244,7 +244,8 @@ IE盒子模型
 	3.绝对定位(absolute || fixed)
 	2.设置该元素为非visible(hidden，auto，scroll)
 	
-作用：避免上下margin的传递(p131)，边界贴紧就会传递
+作用：避免上下margin的传递(p131)，边界贴紧就会传递。
+margin不会左右传递
 ```
 
 ### 12.盒子模型与boxsizing
@@ -387,6 +388,7 @@ CSS放头部，在加载html生成DOM tree的时候，就可以同时对DOM tree
 	2）对于多次需要进行重排的元素，可以改变position的值(fixed,absolute)使其脱离文档流，这样可以避免影响其他	   元素
 	3）尽量避免使用display：none，改用visibility：hidden。(他两个的区别)
 	4）使用resize事件时，使用防抖节流
+	5）多使用css动画，避免JS去操作动画
 ```
 
 ### 21.垂直水平居中
@@ -394,9 +396,9 @@ CSS放头部，在加载html生成DOM tree的时候，就可以同时对DOM tree
 ```
 1.垂直居中
 	需要知道宽高：
-	1）absolute； top：50%； margin: -self.width
-	2) basolute; top: 0; bottom: 0; margin: auto;
-	3) absolute; top: (50% - self.height)
+	1）absolute； top：50%； margin-top: -self.width
+	2) basolute; top: 0; bottom: 0; margin: auto 0;
+	3) absolute; top: calc(50% - self.height)
 	
 	不需要知道宽高：
 	1) absolute; top: 50%; transform: translateY(-50%);

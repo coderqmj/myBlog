@@ -16,7 +16,8 @@
 ### 2.refs的作用
 
 ```
-作用：安全访问某个元素或者某个组件实例的句柄
+作用：安全访问某个元素或者某个组件实例的句柄。
+使用场景：媒体播放，文本选择，触发强制动画
 ```
 
 ### 3.修改了state进行相关的操作
@@ -53,7 +54,7 @@
 - 还是1
 - 源码内部用了do while循环
 
-```
+```js
   increment() {
     this.setState({
       counter: this.state.counter + 1
@@ -98,12 +99,27 @@ increment() {
 
 ```
 Context/eventBus
+父传子：props
+子传父：props
+兄弟：event bus安装第三方、context Provider提供数据，Consumer里面使用数据
+redux
 ```
 
 ### 9.react渲染DOM的原理
 
 ```
 JSX -> 虚拟DOM -> 真实DOM
+1.首先我们一般都使用JSX去写一些DOM，但本质上这是一种语法糖，内部会帮我们做一个转换，将JSX语法转换成
+React.createElement(标签，属性，子组件)这个函数。
+2.React.createElement：
+	这个函数主要做三样事情：
+		1.取出config属性
+			1.key，ref，source等等
+			2.创建一个属性的对象，将每个属性通过for in循环config进行存储至props中
+		2.处理children
+			1.判断孩子长度是否>1，1的话props.children=children;
+			2.>1的话，创建一个数组childrenArray，通过遍历children，将数组赋值，最后props.children=childrenArray
+		3.返回ReactElement（虚拟DOM）
 ```
 
 ### 10.React更新流程
@@ -151,8 +167,6 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 他会使本不该重新渲染的页面发生重新渲染，
 第二个参数用shallowEqual，进行浅层比较
 ```
-
-### 14.ImmutableJS
 
 ### 15.请求数据存到redux过程
 
@@ -209,6 +223,18 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 不推荐使用：
 	willMounted，willUpdate
 	
+官方文档：
+	官方文档分为常用生命周期和不常用生命周期
+		常用生命周期：
+			1.constructor
+			2.render
+			3.componentDidMount
+			4.componentDidUpdate
+			5.componentWillUnMount
+		不常用：
+			1.getDerivedStateFromProps：在调用render方法之前调用
+			2.getSnapshotBeforeUpdate：在最近一次渲染输出之前调用，是组件在发生更改前那个DOM获取信息，如滚动位置。这个生命周期任何返回值都会传给componentDidUpdate。
+			3.shouldComponentUpdate：手动判断组件是否需要更新。
 ```
 
 ### 17.useMemo和useCallback的区别
@@ -294,8 +320,12 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 ### 23.setState怎么实现的？
 
 ```
-1.内部首先会判断传进来的是object还是function。
-2.
+1.setState有两个参数，第一个partialState，第二个callback
+2.首先判断partialState必须是function，object，null中的一个，否则报错
+3.执行的是this.updater.enqueueSetState(this, partialState, callback, 'setState');
+	每个类组件都有updater
+	enqueueSetState根据不同的上下文，生成一个currentTime，再用currentTime计算一个过期时间。
+	这个过期时间只有两个值，一个Sync，一个Batched，对应同步，异步（批量处理）
 ```
 
 ### 24.setState如何立即获取到更新后的值
