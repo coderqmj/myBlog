@@ -164,7 +164,7 @@ S：没有同源策略的话，利用iframe嵌套银行的网页，将账号密�
 阻止冒泡：
 	W3C：e.stopPropagation()
 	IE：e.cancelBubble = true
-
+	项目中：在做文案中心年度报告的时候，第一次进入就需要一个弹窗图片，点击图片进入年度报告，点击图片外部则display: none;这就需要阻止冒泡。
 取消默认事件：
 	w3c:e.preventDefault()
 	ie: e.returnValue = false
