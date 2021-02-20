@@ -73,7 +73,7 @@
 - 如果想要它累加呢？
 - 将第一个参数设置为函数(prevState, props),拿到先前的state
 
-```
+```js
 increment() {
   this.setState((prevState, props) => {
     return {
@@ -100,7 +100,7 @@ increment() {
 ```
 Context/eventBus
 父传子：props
-子传父：props
+子传父：props，在父组件创建好函数，传入props中，在子组件里取出来，从而达到使用父组件的state。
 兄弟：event bus安装第三方、context Provider提供数据，Consumer里面使用数据
 redux
 ```
@@ -201,6 +201,18 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
     dispatch(getHotRecommendAction(limit))
   },[dispatch])
 ```
+
+### 15.redux请求数据过程
+
+```
+1.首先封装请求数据的函数，导出
+2.定义常量。
+3.在reducer里面进行switch case actionType，返回响应的state
+4.在actionCreators定义action。拿到请求结果，放入state里面
+5.在组件里面进行useEffect请求。
+```
+
+
 
 ### 16.生命周期
 

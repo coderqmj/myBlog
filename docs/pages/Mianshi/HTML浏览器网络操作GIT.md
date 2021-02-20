@@ -250,6 +250,27 @@ http无状态连接
 
 ```
 
+### 17.TCP三次握手
+
+```
+
+```
+
+### 18.简单请求非简单请求
+
+```
+简单请求：
+	1.HTTP方法是下面之一：HEAD GET POST
+	2.HTTP头部信息不超出以下几种字段：
+		1.AcceptAccept
+    2.Accept-Language
+    3.Content-Type，但仅能是下列之一
+      application/x-www-form-urlencoded
+      multipart/form-data
+      text/plain
+ 
+```
+
 
 
 ### 10.503
@@ -270,7 +291,8 @@ header/footer/article/nav/section/video/audio/canvas
 	get参数url可见		 post参数不可见
 	get请求可以缓存		post请求不可以缓存
 	get数据一般2-4k		 post请求传输数据大小php.inis设定
-	
+	get一般用于查询的数据 post用于添加修改删除之类的。
+	get安全性低一点			post安全性比get高   解释：登录传参 get=>login?name='qmj'&password=123
 ```
 
 ### 3.post数据类型
