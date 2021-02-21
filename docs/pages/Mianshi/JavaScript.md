@@ -652,3 +652,101 @@ async：表示js脚本一旦加载完成，立即执行
 this指向的优先级：new>显示绑定>隐式绑定>默认绑定
 ```
 
+### 50.JS如何解析的
+
+```
+1.JS源码通过Parse模块生成抽象语法树AST。
+2.AST通过Ignition模块将语法树解析成字节码。
+3.字节码进步转成汇编，机器码，最后交给CPU执行。
+```
+
+### 51.promise.all
+
+```
+
+```
+
+### 52.promise.retry
+
+```js
+retry = function (fn, times, delay) {
+  var err = null;
+  return new Promise(function (resolve, reject) {
+
+    var attempt = function () {
+      fn().then(resolve).catch(function (err) {
+        console.log(`Attempt #${times} failed`);
+        if (0 == times) {
+          reject(err);
+        } else {
+          times--;
+          setTimeout(function () {
+            attempt()
+          }, delay);
+        }
+      });
+    };
+    attempt();
+  })
+}
+
+```
+
+### 53.scr和href区别
+
+```
+1.href：超文本引用，一般用在link和a等元素上，引用和页面关联的关系
+2.src：代表着资源，img，script上面，是指向外部资源的位置，会把它下载到当前的文档中，js脚本，img图片等等。
+```
+
+### 54.前端路由实现
+
+```
+1.hash路由：原生方法实现好了
+	1.在window上监听hashChange事件，监听location.hash改变。
+	2.在里面switch case，匹配相应的路由，再去展示相应的组件
+
+2.history路由：
+	history是H5新出的，所以没有原生监听事件，需要自己去实现。
+	1.首先需要改变a标签的默认行为，e.preventDefault();
+	2.为a标签添加点击事件
+		1.获取a标签里面的href属性，
+		2.el.getAttribute("href"),history.pushState({}, "", href);
+		3.调用自己定义的URLChange方法。
+	3.URLChange方法里面做的事情就是switch case，去匹配location.pathname，匹配上了，展示相应的组件即可。
+```
+
+### 55.深拷贝浅拷贝
+
+```
+浅拷贝：只拷贝一层，如果存在两层以上无法拷贝，他会将被嵌套的对象的地址值赋值给它，但里面的内容是存在的，只是赋值而已，不是拷贝。
+	1.扩展运算符... let obj1 = {...originObj}
+	2.Object.assign({}, originObj)
+	3.手动实现，只需要遍历一层属性，直接赋值即可
+	4.数组有slice，concat
+	
+深拷贝：存在两层以上都可以进行拷贝，使得整个对象都和源对象无关
+	1.手动实现，需要递归，先判断该属性的类型是对象还是值类型，对象就进入递归
+	2.JSON.parse(JSON.stringify());
+		缺陷：1.会忽略undefined、symbol和函数 2.循环引用会报错
+
+考虑循环引用深拷贝：hashMap
+
+```
+
+### 56.洗牌算法
+
+```js
+function shuffle(arr) {
+  // 每次从未处理的数组中随机取一个元素，
+  // 然后把该元素放到数组的尾部，
+  // 即数组的尾部放的就是已经处理过的元素，
+  let n = arr.length, random;
+  while (0 != n) {//>>>作用是向下取整？
+    random = (Math.random() * n--) >>> 0; // 无符号右移位运算符向下取整
+    [arr[n], arr[random]] = [arr[random], arr[n]] // ES6的结构赋值实现变量互换
+  }
+  return arr;
+}
+```
+
