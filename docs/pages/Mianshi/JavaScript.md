@@ -377,7 +377,7 @@ const和let的区别：
 	观察者Observer/订阅器Dep/订阅者Watcher/解析器Compile
 
 观察者Obserr：
-	写一个函数里面用set和get监听属性的被谁依赖与改变。然后遍历(Object.keys(obj))对象的每一个属性，让每一个对象被监听.
+	写一个函数里面用set和get监听属性的被谁依赖与改变。然后遍历(Object.keys(obj))对象的每一个属性，让每一个属性被监听.
 
 订阅器Dep：
 	订阅器收集订阅者，数据变化的时候调用订阅者更新函数；
@@ -479,7 +479,7 @@ commonjs:
 
 |                   for in                   |        for of        |
 | :----------------------------------------: | :------------------: |
-|              获取的是键名key               |  获取的是键值value   |
+|          获取的是键名key或者下标           |  获取的是键值value   |
 |       会遍历整个对象的原型链，性能差       |    只遍历当前对象    |
 | 数组遍历：会返回所有可枚举属性，包括原型链 | 只返回下标对应属性值 |
 
@@ -749,4 +749,59 @@ function shuffle(arr) {
   return arr;
 }
 ```
+
+### 57.虚拟DOM
+
+```
+我对虚拟DOM的理解是：
+
+我们对将要插入到文档的DOM树进行分析，使用js对象的形式将DOM层级情况进行描述，tagname，props，children。最后将js对象树，插入到文档中。
+
+当页面结构发生改变，需要对DOM结构进行调整，先根据变更的状态，重新构建一个对象树，然后对比两个虚拟DOM对象，记录下两个树的差异。最后将记录的差异更新到真实DOM中，这样试图就更新了。
+
+虚拟DOM在大量修改DOM的时候，可以很好的提高操作效率，通过在操作前确定需要做的最小修改，尽可能较少DOM操作带来的重排重绘。
+```
+
+### 58.快速排序
+
+```js
+const quickSort = (array) => {
+  if(array.length === 0) return array;
+  let left = [];
+  let right = [];
+  let curr = array.splice(0,1);
+  for(let i = 0; i<array.length; i++) {
+		if(array[i]<curr){
+      left.push(array[i])
+		}else {
+      right.push(array[i])
+    }
+  }
+  return quickSort(left).concat(curr,quickSort(right));
+} 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
