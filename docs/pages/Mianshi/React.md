@@ -207,8 +207,9 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 ```
 1.首先封装请求数据的函数，导出
 2.定义常量。
-3.在reducer里面进行switch case actionType，返回响应的state
-4.在actionCreators定义action。拿到请求结果，放入state里面
+4.在actionCreators定义action，action由type和payload对象组成。拿到请求结果，放入state里面
+3.在业务代码中dispatch(action)，他会自动调用reducer。
+3.在reducer里面进行switch case actionType，返回最新的state
 5.在组件里面进行useEffect请求。
 ```
 
@@ -368,4 +369,6 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 	2.出现了hooks解决了很多问题
 
 ```
+
+### 27.React传参方式
 
