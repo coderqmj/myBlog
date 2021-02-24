@@ -145,6 +145,9 @@ module.exports = {
           sidebarDepth: 2, 
           children: [
             ['../pages/Git/git学习.md','GIT教程'],
+            ['../pages/Git/git-cherry-pick教程.md','git-cherry-pick教程'],
+            ['../pages/Git/git-cherry-pick教程.md','git-cherry-pick教程'],
+            
           ]
         },
         {
