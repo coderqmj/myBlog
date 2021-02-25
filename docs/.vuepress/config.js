@@ -146,7 +146,7 @@ module.exports = {
           children: [
             ['../pages/Git/git学习.md','GIT教程'],
             ['../pages/Git/git-cherry-pick教程.md','git-cherry-pick教程'],
-            ['../pages/Git/git-cherry-pick教程.md','git-cherry-pick教程'],
+            ['../pages/Git/git撤销提交.md','git撤销提交'],
             
           ]
         },

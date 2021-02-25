@@ -372,3 +372,14 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 
 ### 27.React传参方式
 
+### 28.React每次setState都会引起diff算法吗
+
+```
+不一定
+
+理由：
+	1.当进行了SCU优化时，setState之后又进行了浅层比较，有可能就是在浅层比较阶段没有深入对比下去，然后又是state里面对象没有拷贝，造成浅层比较判定值都一样。所以，setState之后，可能不会发起diff算法。
+```
+
+
+

@@ -787,6 +787,22 @@ const quickSort = (array) => {
 
 ### 60.非递归实现快排
 
+### 61.判断对象是否为空
+
+```js
+function checkNullObj(obj) {
+  return Object.keys(obj).length === 0;
+}
+```
+
+### 62.encodeURI和encodeURIComponent区别
+
+```
+都是编码URL，唯一区别就是编码的字符范围
+encodeURI方法作用范围小										encodeURIComponent区别作用范围大
+适合用于解析域名之类的，域名特殊字符不会被解析	 域名中的特殊字符/会被转义，适合编码URL参数		
+```
+
 
 
 
