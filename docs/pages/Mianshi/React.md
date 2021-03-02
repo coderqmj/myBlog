@@ -381,5 +381,14 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 	1.当进行了SCU优化时，setState之后又进行了浅层比较，有可能就是在浅层比较阶段没有深入对比下去，然后又是state里面对象没有拷贝，造成浅层比较判定值都一样。所以，setState之后，可能不会发起diff算法。
 ```
 
+### 29.RN和React的区别
+
+```
+RN：用对应的是移动应用平台															React：渲染品台是浏览器HTML渲染
+RN：都是用JSX语法进行开发，都是利用虚拟DOM这个特性
+RN：自动匹配不同手机的大小
+RN：很多css3样式不能使用box-shadow
+```
+
 
 

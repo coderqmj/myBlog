@@ -339,6 +339,7 @@ const和let的区别：
 3.定义.then方法
 	.then有两个回调，第一个成功，第二个失败
 	判断当前状态去执行成功还是失败
+	如果是pending状态，将成功或者失败回调事件存入对应的数组中
 	
 ```
 
@@ -803,7 +804,29 @@ encodeURI方法作用范围小										encodeURIComponent区别作用范围大
 适合用于解析域名之类的，域名特殊字符不会被解析	 域名中的特殊字符/会被转义，适合编码URL参数		
 ```
 
+### 63.数组去重怎么考虑NaN
 
+```
+1.使用map和set数据结构，可以进行识别map.has(NaN)会被判断成true
+```
+
+### 64.搜索发起请求，下面显示数据不对
+
+```
+1.打断上一次请求
+2.节流防抖
+3.看时间戳
+```
+
+### 65.中断一个网络请求
+
+```
+XHR: 
+	1.xhr.abort()
+Fetch:
+	1.const controller = new AbortController() 
+	controller.abort()即可；
+```
 
 
 

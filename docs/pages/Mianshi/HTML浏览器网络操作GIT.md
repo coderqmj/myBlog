@@ -194,15 +194,21 @@ http无状态连接
 请求报文结构：
 	1.请求行：请求方法（Method） + 空格 + 统一资源标识符（URI） + 空格 + HTTP版本 + CR LF 
 	2.请求头：字段名 + 冒号 + 值 + CR LF 
+		Referer：后面路径也带上
+		Connection，Cookie，Origin，Content-Length
 	3.空行： 回车符（CR）+ 换行符（LF
 	4.请求体： 由用户自定义添加，如post的body等；
+
 	
 响应报文结构：
 	1.状态行：HTTP版本 + 空格 + 状态码 + 空格 + 状态码描述 + CR LF ；
 	2.响应头：字段名 + 冒号 + 值 + CR LF ；
+		Access-Control-Allow-Headers，Connection，Content-Type，Set-Cookie
 	3.空行： 回车符（CR）+ 换行符（LF） ；
 	4.响应体： 由用户自定义添加，如post的body等；
 ```
+
+
 
 ### 12.HTTP请求流程
 
@@ -374,6 +380,26 @@ load:
 	audio、video
 4.离线存储
 	localStorage，sessionStorage，indexDB
+```
+
+### 9.querySelector可以选择伪元素吗
+
+```
+不能，MDN上面查过，注意事项里面提到CSS伪类，伪元素无法返回任何元素 
+```
+
+### 10.前端渲染和后端渲染区别
+
+```
+服务端渲染：
+	由后端去管理路由的匹配，每个url在后端对应一个资源，在后端渲染好再展示到前端上。
+	服务器做的事情：
+		url发送到服务器，服务器自己正则匹配，控制器处理生成HTML和数据，返回给前端
+
+前端渲染：
+	由前端进行路由匹配规则，history和hash模式。
+	html，css，js资源都是由静态资源服务器返回的。
+	数据通过接口进行请求，由后端返回数据。
 ```
 
 
