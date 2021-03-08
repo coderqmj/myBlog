@@ -186,6 +186,9 @@ IE：IE盒模型的content包含了padding和border
 IE盒子模型
 总结：
 修改方法：box-sizing：border-box
+
+IE盒模型应用场景：
+	在父容器中，放置2个盒子，宽度50%使其按照宽度排列填满，但是这个时候突然来给子盒子一个padding，就会换行了。因为普通盒模型的宽高指的是内容，所以总盒子大小会被撑开。这种情况下就使用IE盒子模型；
 ```
 
 ### 6.浏览器最小字体是多少？想改变怎么办？
@@ -385,7 +388,7 @@ CSS放头部，在加载html生成DOM tree的时候，就可以同时对DOM tree
 
 4.如何减少重排与缩小重排影响范围
 	1）将多次改变样式属性操作合并成一次
-	2）对于多次需要进行重排的元素，可以改变position的值(fixed,absolute)使其脱离文档流，这样可以避免影响其他	   元素
+	2）对于多次需要进行重排的元素，可以改变position的值(fixed,absolute)使其脱离文档流，这样可以避免影响其他元素
 	3）尽量避免使用display：none，改用visibility：hidden。(他两个的区别)
 	4）使用resize事件时，使用防抖节流
 	5）多使用css动画，避免JS去操作动画
@@ -444,12 +447,23 @@ CSS放头部，在加载html生成DOM tree的时候，就可以同时对DOM tree
 ```
 1.单行：
 	1.overflow: hidden; + text-overflow: ellipsis;
+1.多行：
+	text-overflow: ellipsis;
+	display: -webkit-box;
+	-webkit-line-clamp: 6;  // 表明第几行
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+
 ```
 
 ### 26.实现轮播图
 
 ```
-
+1.首先定义好展示轮播图图片的数组，定义好当前位置current，定义一个播放下一张图片的函数
+	1.下一张图片函数：
+		1.定义下一个位置=(position+1)/len, 定义当前图片=pic[positon],下一张图片=pic[nextPosition]
+		2.让当前图片current.transition='none',下一张也是none,让当前current.style.transform位移100%宽度
+2.setInterval无限循环
 ```
 
 ### 27.css规范

@@ -168,6 +168,25 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 第二个参数用shallowEqual，进行浅层比较
 ```
 
+### 14.为什么使用Redux? Redux更新数据后为什么重新渲染
+
+```
+1.redux完美解决了组件之间的通信问题，不然就要通过props传来传去，有redux，每个组件都可以从redux获取最新store数据，也可以修改store里面的数据。
+2.数据修改时可以被追踪
+
+重新渲染：
+	在componentDidMount订阅了store的变化，且在componentWillUnmount进行取消订阅。
+	用connect纯函数实现的
+```
+
+### 14.纯函数connect
+
+```
+
+```
+
+
+
 ### 15.请求数据存到redux过程
 
 ```js
@@ -212,8 +231,6 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 3.在reducer里面进行switch case actionType，返回最新的state
 5.在组件里面进行useEffect请求。
 ```
-
-
 
 ### 16.生命周期
 
@@ -390,5 +407,10 @@ RN：自动匹配不同手机的大小
 RN：很多css3样式不能使用box-shadow
 ```
 
+### 30.redux原理
 
+### 31.redux dispatch之后如何引发页面渲染的
 
+### 32.为什么使用Redux
+
+### 33.hooks原理？如何自定义hooks
