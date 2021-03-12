@@ -528,3 +528,22 @@ CSS放头部，在加载html生成DOM tree的时候，就可以同时对DOM tree
 	!important不会被覆盖
 ```
 
+### 32.line-height设置为数值和百分比值的区别？
+
+```
+数值：
+	根据自身的font-size成比例，子元素则根据自己的font-size成比例
+百分比：（继百）
+	根据本身的font-size成比例，但是子元素不根据自己的font-size成比例，而是继承上面的line-height
+```
+
+### 33.flex属性简写
+
+```
+flex: 数字；             =>  flex-grow；
+flex: 有单位10em/10px；  =>  width/height: flex-basis
+flex: 两个值 1 30px;     =>  flex-grow | flex-basis 
+flex: 两个纯数字 2 2；    =>  flex-grow | flex-shrink
+flex: 三个值 2 2 10%;    =>  flex-grow | flex-shrink | flex-basis
+```
+

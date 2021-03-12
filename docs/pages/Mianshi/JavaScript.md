@@ -850,6 +850,23 @@ Function.prototype.__proto__ = Object.prototype;
 7.返回token给设备，凭借Token去请求数据。
 ```
 
+### 68.bind的作用
+
+```
+1.改变this指向
+2.创建一个新的函数，需要我们手动的去执行它。不像call，apply可以自动执行
+```
+
+### 69.斐波那契函数
+
+```js
+int fib(int N) {
+  if (N == 1 || N == 2) return 1; 
+  return fib(N - 1) + fib(N - 2);
+}
+O(2^n)
+```
+
 
 
 
