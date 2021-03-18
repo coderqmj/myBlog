@@ -21,8 +21,6 @@ mounted（挂载后）：在模板渲染成HTML后调用，这个时候可以对
 	<router-link :to='{path: '/profile', query: {name:'qmj',age:18}}'>档案</router-link>
 ```
 
-
-
 ### 4.vuex的actions和mutations的区别
 
 ```

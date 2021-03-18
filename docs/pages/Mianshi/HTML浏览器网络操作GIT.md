@@ -191,8 +191,8 @@ http无状态连接
 
 ```
 请求报文结构：
-	1.请求行：请求方法（Method） + 空格 + 统一资源标识符（URI） + 空格 + HTTP版本 + CR LF 
-	2.请求头：字段名 + 冒号 + 值 + CR LF 
+	1.请求行：请求方法（Method） + 空格 + 统一资源标识符（URI） + 空格 + HTTP版本 + CRLF 
+	2.请求头：字段名 + 冒号 + 值 + CRLF 
 		Referer：后面路径也带上
 		Connection，Cookie，Origin，Content-Length
 	3.空行： 回车符（CR）+ 换行符（LF
