@@ -103,6 +103,15 @@ module.exports = {
             ['../pages/Node/学习笔记.md', 'NODE学习笔记'],
             ['../pages/Node/Node源码阅读.md', 'Node源码阅读'],
             ['../pages/Node/Koa和Express对比.md', 'Koa和Express对比'],
+            ['../pages/Node/Node版本管理.md', 'Node版本管理'],
+          ]
+        },
+        {
+          title: 'Webpack',
+          collapsable: true,
+          sidebarDepth: 2, 
+          children: [
+            ['../pages/Webpack/学习笔记.md', 'Webpack学习笔记']
           ]
         },
         {
@@ -172,10 +181,13 @@ module.exports = {
           sidebarDepth: 2, 
           children: [
             // ['../pages/suosui/CommandJS.md','前端模块化'],
+            ['../pages/suosui/待学习清单','待学习清单'],
             ['../pages/suosui/设计模式.md','设计模式'],
             ['../pages/suosui/前端渲染&后端渲染.md','前端渲染&后端渲染'],
             ['../pages/suosui/原生高度属性及区别.md','原生高度属性及区别'],
             ['../pages/suosui/奇怪的知识点小技巧.md','奇怪的知识点小技巧'],
+            ['../pages/suosui/浏览器兼容性.md','浏览器兼容性'],
+            
           ]
         },
         // {
