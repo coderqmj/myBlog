@@ -168,6 +168,14 @@ module.exports = {
           ]
         },
         {
+          title: '正则表达式',
+          collapsable: true,
+          sidebarDepth: 2, 
+          children: [
+            ['../pages/Regular/正则表达式学习.md','正则表达式学习'],
+          ]
+        },
+        {
           title: '实习遇到的问题及成长',
           collapsable: true,
           sidebarDepth: 2, 
