@@ -16,3 +16,9 @@
 	1.loader中可以使用插件，且plugins是一个数组，一个loader可以使用多个plugin
 ```
 
+### 5.webpack5新特性
+
+```
+1.加载其他资源无需安装file-loader，url-loader，直接使用asset module type模块，使其可以加载图片资源，配置存放路径等。
+```
+
