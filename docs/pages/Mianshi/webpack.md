@@ -13,7 +13,11 @@
 
 ```
 我理解的loader和plugins是：
+	0.官方的描述：
+		1.loaders是用于转换一些特定的模块类型的，例如css，less，png这些资源。
+		2.plugin是用于执行更加广泛的任务，打包优化，资源管理，环境变量注入等
 	1.loader中可以使用插件，且plugins是一个数组，一个loader可以使用多个plugin
+	2.loader放在module中，plugin放在plugins中
 ```
 
 ### 5.webpack5新特性
