@@ -138,6 +138,7 @@ module.exports = {
             ['../pages/CSS/animation&transfrom.md','animation&transfrom相关'],
             ['../pages/CSS/回流重绘.md','回流重绘'],
             ['../pages/CSS/less学习.md','less学习'],
+            ['../pages/CSS/项目样式重置.md','项目样式重置'],
           ]
         },
         // {
@@ -173,6 +174,15 @@ module.exports = {
           sidebarDepth: 2, 
           children: [
             ['../pages/Regular/正则表达式学习.md','正则表达式学习'],
+          ]
+        },
+        {
+          title: '项目',
+          collapsable: true,
+          sidebarDepth: 2, 
+          children: [
+            ['../pages/Project/项目样式重置.md','项目样式重置'],
+            ['../pages/Project/项目配置别名.md','项目配置别名'],
           ]
         },
         {
