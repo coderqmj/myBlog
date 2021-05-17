@@ -183,6 +183,7 @@ module.exports = {
           children: [
             ['../pages/Project/项目样式重置.md','项目样式重置'],
             ['../pages/Project/项目配置别名.md','项目配置别名'],
+            ['../pages/Project/路由配置及划分.md','路由配置及划分'],
           ]
         },
         {
@@ -205,6 +206,7 @@ module.exports = {
             ['../pages/suosui/原生高度属性及区别.md','原生高度属性及区别'],
             ['../pages/suosui/奇怪的知识点小技巧.md','奇怪的知识点小技巧'],
             ['../pages/suosui/浏览器兼容性.md','浏览器兼容性'],
+            ['../pages/suosui/代码规范.md','代码规范'],
             // ['../pages/suosui/个人前端学习经历.md','个人前端学习经历'],
           ]
         },
