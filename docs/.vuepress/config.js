@@ -195,6 +195,15 @@ module.exports = {
           ]
         },
         {
+          title: '腾讯工作的思考与总结',
+          collapsable: true,
+          sidebarDepth: 2, 
+          children: [
+            ['../pages/TencentWork/工作记录总结与思考.md','工作记录总结与思考'],
+            ['../pages/TencentWork/阶段性总结.md','阶段性总结'],
+          ]
+        },
+        {
           title: '琐碎',
           collapsable: true,
           sidebarDepth: 2, 
