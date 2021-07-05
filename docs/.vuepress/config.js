@@ -111,7 +111,7 @@ module.exports = {
           collapsable: true,
           sidebarDepth: 2, 
           children: [
-            ['../pages/Webpack/学习笔记.md', 'Webpack学习笔记']
+            ['../pages/WebPack/学习笔记.md', 'Webpack学习笔记']
           ]
         },
         {
