@@ -66,7 +66,7 @@ it.next().value.then(res => {
 })
 ```
 
-### 二、redux-saga
+#### 二、redux-saga
 
 - 可以对很多代码进行分离，让代码结构更加清晰
 
@@ -130,7 +130,83 @@ it.next().value.then(res => {
 - takeEvery么一个都会被执行
 - 所以这个api也可以解决搜索框问题？
 
+### 2.3 fork
 
+`fork(fn, ...args)`
+
+`fork([context, fn], ...args)`
+
+- 非阻塞调用fn
+- 项目中可在flow.js中初始化数据
+
+![](./ImgSourceCode/saga_fork_01.png)
+
+
+
+### 三、Duck
+
+#### 1.creators:
+
+- 用于创建actions
+- 在组件中使用
+
+![](./ImgSourceCode/saga_duck_creators.png)
+
+![](./ImgSourceCode/use_creators.png)
+
+#### 2.selectors
+
+- 用于返回一些数据
+- 在duck.js中的代码
+
+```js
+selectors: {
+    value: ({ value }) => value,
+    zoneId: ({ zoneId }) => zoneId,
+    list: ({ list }) => list,
+    selected: ({ list, zoneId }) => list.find((item) => item.zoneId == zoneId),
+    isDefault: ({ isDefault }) => isDefault,
+  },
+```
+
+- 在组件中使用，这样就可以获取到zone里面想要的数据
+
+```js
+const list = zone.selectors.list(store)
+const selected = zone.selectors.selected(store)
+const isDefault = zone.selectors.isDefault(store)
+```
+
+#### 3.reducers
+
+- 用于创建该duck中的数据结构
+- 在duck.js写法
+
+```js
+reducers: ({ types }) => ({
+  zoneId: reduceFromPayload(types.SELECT_ZONE, null),
+  list: reduceFromPayload(types.SET_LIST, []),
+  isDefault: reduceFromPayload(types.SET_DEFAULT, true),
+})
+```
+
+- 然后在某个模块中对数据进行获取，调用该reducers对应的type，传入payload即可
+
+```js
+// 1.数据获取
+let list = yield getData(regionId)
+// 2.设置list数据
+yield put({
+  type: types.SET_LIST,
+  payload: list
+})
+```
+
+
+
+- 这样在该duck中就有如下数据了
+
+![](./ImgSourceCode/duck_reducers.png)
 
 ### 三、总结
 
