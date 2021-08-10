@@ -457,3 +457,466 @@ sum(20, 30);
 sum(20, 30, 40);
 ```
 
+#### 3.7函数联合类型
+
+- 如果函数传入连个参数，是联合类型，然后进行运算，会造成代码编译错误，甚至最后的返回值也无法确定类型
+- 那应该怎么办？答案是重载
+
+```js
+function (num1: number | string, num2: number | string) {
+    // 1.直接运算返回报错
+    return num1 + num2;
+    // 2.进行逻辑判断，可以编译通过，但是返回值无法确定类型
+    if(typeof num1 === 'number' && typeof num2 === 'number') {
+        ...
+    }else if() {...}
+}
+```
+
+#### 3.8函数的重载
+
+```js
+// 函数的重载: 函数的名称相同, 但是参数不同的几个函数, 就是函数的重载
+function add(num1: number, num2: number): number; // 没函数体
+function add(num1: string, num2: string): string;
+
+function add(num1: any, num2: any): any {
+  if (typeof num1 === 'string' && typeof num2 === 'string') {
+    return num1.length + num2.length
+  }
+  return num1 + num2
+}
+
+const result = add(20, 30)
+const result2 = add("abc", "cba")
+console.log(result)
+console.log(result2)
+
+// 在函数的重载中, 实现函数是不能直接被调用的
+// add({name: "why"}, {age: 18})
+```
+
+
+
+### 四、TS类的使用
+
+#### 4.1类的定义
+
+- constructor初始化类，必须要传入
+- 初始化的方式有两种：
+  - 在下面 2、3行就进行赋值
+  - 在constructor中
+
+```js
+class Person {
+  name: string
+  age: number
+
+  constructor(name: string, age: number) {
+    this.name = name
+    this.age = age
+  }
+
+  eating() {
+    console.log(this.name + " eating")
+  }
+}
+
+const p = new Person("qmj", 18)
+console.log(p.name)
+console.log(p.age)
+p.eating()
+```
+
+#### 4.2类的继承
+
+- 多态、继承、封装
+- 继承时多态的前提
+- 可以简化代码，减少代码的冗余量
+
+```js
+class Person {
+  name: string = ""
+  age: number = 0
+
+  eating() {
+    console.log("eating")
+  }
+}
+
+class Student extends Person {
+  sno: number = 0
+
+  studying() {
+    console.log("studying")
+  }
+}
+
+class Teacher extends Person {
+  title: string = ""
+
+  teaching() {
+    console.log("teaching")
+  }
+}
+
+const stu = new Student()
+stu.name = "coderwhy"
+stu.age = 10
+console.log(stu.name)
+console.log(stu.age)
+stu.eating()
+```
+
+- 开发中会用到的技巧
+  - 继承时使用super关键字对父类进行初始化，就可以对子类的数据进行保存
+
+```js
+class Person {
+  name: string
+  age: number
+
+  constructor(name: string, age: number) {
+    this.name = name
+    this.age = age
+  }
+
+  eating() {
+    console.log("eating 100行")
+  }
+}
+
+class Student extends Person {
+  sno: number
+
+  constructor(name: string, age: number, sno: number) {
+    // super调用父类的构造器
+    super(name, age)
+    this.sno = sno
+  }
+
+  eating() {
+    console.log("student eating")
+    super.eating()
+  }
+
+  studying() {
+    console.log("studying")
+  }
+}
+
+const stu = new Student("qmj", 18, 111)
+console.log(stu.name)
+console.log(stu.age)
+console.log(stu.sno)
+
+stu.eating()
+
+```
+
+
+
+#### 4.3类的多态
+
+- 最终执行的是重写之后的action
+
+```js
+class Animal {
+  action() {
+    console.log("animal action")
+  }
+}
+
+class Dog extends Animal {
+  action() {
+    console.log("dog running!!!")
+  }
+}
+
+class Fish extends Animal {
+  action() {
+    console.log("fish swimming")
+  }
+}
+
+class Person extends Animal {
+
+}
+
+// animal: dog/fish
+// 多态的目的是为了写出更加具备通用性的代码
+function makeActions(animals: Animal[]) {
+  animals.forEach(animal => {
+    animal.action()
+  })
+}
+
+makeActions([new Dog(), new Fish(), new Person()])
+```
+
+#### 4.4类的修饰符
+
+- 修饰符一共有4个：public、private、protected，readonly默认的是public
+- public：
+  - 随便访问，都可以被访问到
+- private：
+  - 只能在类的内部进行访问，外部不可以进行直接访问/修改，需要通过内部方法去访问/修改private的值
+- protected:
+  -  在类内部和子类中可以访问
+
+```js
+// 私有，子类都不能直接访问，必须通过内部方法访问
+class Person {
+  private name: string = ""
+
+  // 封装了两个方法, 通过方法来访问name
+  getName() {
+    return this.name
+  }
+
+  setName(newName) {
+    this.name = newName
+  }
+}
+// 保护，只有本身和子类才能访问
+class Person {
+  protected name: string = "123"
+}
+
+class Student extends Person {
+  getName() {
+    return this.name
+  }
+}
+```
+
+- readonly：
+  - 只可以被访问，但不能被修改
+  - 只读属性是可以在构造器中赋值, 赋值之后就不可以修改
+  - 属性本身不能进行修改, 但是如果它是对象类型, 对象中的属性是可以修改
+
+```js
+class Person {
+  // 1.只读属性是可以在构造器中赋值, 赋值之后就不可以修改
+  // 2.属性本身不能进行修改, 但是如果它是对象类型, 对象中的属性是可以修改
+  readonly name: string
+  age?: number
+  readonly friend?: Person
+  constructor(name: string, friend?: Person) {
+    this.name = name
+    this.friend = friend
+  }
+}
+
+const p = new Person("why", new Person("kobe"))
+console.log(p.name)
+console.log(p.friend)
+
+// 不可以直接修改friend
+// p.friend = new Person("james")
+if (p.friend) {
+  p.friend.age = 30
+} 
+
+// p.name = "123"
+```
+
+
+
+### 五、接口的使用
+
+#### 5.1声明对象类型
+
+当我们要在TS中定义对象并限制属性的类型时，我们可以通过类型（Type）别名来声明：
+
+```typescript
+type InfoType = {name: string, age: number};
+
+const info: InfoType = {
+    name: 'qmj',
+    age: 18
+}
+```
+
+当然，我们也可以使用另一种方式去声明对象类型：接口interface
+
+- 作用和上面是等价的，但是要注意每个属性之间都**没有逗号**隔开
+- 可以定义可选类型，也可以定义只读属性
+
+```typescript
+interface InfoType = {
+    name: string
+    age?: number // 表示该接口是可选属性
+    readonly height: number // 表示只读，身高改不了了
+}
+```
+
+#### 5.2索引类型
+
+- 可以观察到下面键值对是有规律的，键是数字，值是字符串
+
+```typescript
+// 普通写法
+const frontLanguage = {
+  0: "HTML",
+  1: "CSS",
+  2: "JavaScript",
+  3: "Vue",
+  'adasd': 'wdad'  // 不报错
+}
+// 通过interface来定义索引类型
+interface IndexLanguage = {
+    [index: number]: string
+}
+const frontLanguage: IndexLanguage  = {
+  0: "HTML",
+  1: "CSS",
+  2: "JavaScript",
+  3: "Vue",
+  'ads': 'w'  // 报错
+}
+```
+
+#### 5.3函数类型
+
+- 之前可以通过type去定义函数，现在也可以使用接口去
+- 但是函数类型的接口形式可读性比较差，所以推荐type方法去定义
+
+```typescript
+// type CalcFn = (n1: number, n2: number) => number
+
+// 接口去定义函数类型，且是可调用的接口
+interface CalcFn {
+  (n1: number, n2: number): number
+}
+
+function calc(num1: number, num2: number, calcFn: CalcFn) {
+  return calcFn(num1, num2)
+}
+
+const add: CalcFn = (num1, num2) => {
+  return num1 + num2
+}
+
+calc(20, 30, add)
+```
+
+#### 5.4接口继承
+
+- 接口是可以继承的，且是可以多继承
+
+```typescript
+interface ISwim {
+  swimming: () => void
+}
+
+interface IFly {
+  flying: () => void
+}
+
+
+interface IAction extends ISwim, IFly {
+
+}
+
+const action: IAction = {
+  swimming() { // 继承了ISwim，所以必须要有swimming
+
+  },
+  flying() {
+    
+  }
+}
+```
+
+#### 5.5交叉类型
+
+- 前面学习过联合类型，联合类型就是把可能用到的类型放在一起
+- 另一种组合类型的方式：交叉类型，使用 `&` 符号进行连接
+  - 表示这个类型即是number类型，优势string类型，一般情况下是不可能的，鼠标放上去直接never了
+
+```typescript
+// 前面学习的联合类型
+type Type = number | string
+type Direction = "left" | "right" | "center"
+
+// 另一种组件类型的方式: 交叉类型
+type WType = number & string
+```
+
+- 一般情况都是没有意义的，那么什么情况才有意义呢？
+  - 答案是对象类型时
+
+```typescript
+// 下面有两个接口，分别是游泳和飞翔
+interface ISwim {
+    swimming: () => void
+}
+interface IFly {
+    flying: () => void
+}
+
+// 下面两个类型，分别是联合类型和交叉类型
+type MyType1 = ISwim | IFly
+type MyType2 = ISwim & IFly
+const obj1: MyType1 {
+    flying: () { // 联合类型，只实现一个不会报错
+	}
+}
+
+const obj2: MyType2 {
+    flying: () { // 交叉类型，必须两个都实现，不然报错
+	}
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
