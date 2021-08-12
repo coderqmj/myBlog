@@ -751,6 +751,17 @@ interface InfoType = {
 }
 ```
 
+- 在react中hooks中使用
+
+```typescript
+const[obj,setObj]=useState<{name:string;age:number;sex:string}>({name:'tom',age:15,sex:'男'})  对象
+const[arr,setArr]=useState<Array<{name:string;age:number}>>=([{name:'tom',age:15}
+const[sex,setSex]=useState<boolean>(true)
+const[name,setName]=useState<string>
+```
+
+
+
 #### 5.2索引类型
 
 - 可以观察到下面键值对是有规律的，键是数字，值是字符串
@@ -872,7 +883,38 @@ const obj2: MyType2 {
 
 
 
+#### 5.6接口的实现
 
+#### 5.7interface和type的区别
+
+- interface和type都可以用来定义对象类型，那么在开发中，到底使用哪一个呢？
+  - 如果定义非对象类型，推荐使用type，比如Direction、Alignment、一些Function
+- 如果是定义对象类型，那么他们是有区别的
+  - interface可以重复的对某个接口来定义属性和方法
+  - 而type定义的是别名，别名是不能重复的
+
+```typescript
+interface IFoo {
+  name: string
+}
+
+interface IFoo {  // 可以重复定义
+  age: number
+}
+// 使用时必须传入两个
+const foo: IFoo = {
+  name: "qmj",
+  age: 18
+}
+
+type IBar = {
+  name: string
+  age: number
+}
+
+type IBar = { // 直接报错
+}
+```
 
 
 
