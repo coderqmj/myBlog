@@ -201,6 +201,8 @@ module.exports = {
           children: [
             ['../pages/TencentWork/工作记录总结与思考.md','工作记录总结与思考'],
             ['../pages/TencentWork/阶段性总结.md','阶段性总结'],
+            ['../pages/TencentWork/遇到的问题.md','遇到的问题'],
+            ['../pages/TencentWork/duck学习.md','duck相关学习'],
           ]
         },
         {
