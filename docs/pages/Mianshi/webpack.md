@@ -52,3 +52,42 @@
 3.生成阶段
 ```
 
+### 8.注意的点
+
+```
+1.使用polyfill时，要把node_module排除一下，不然包里面可能已经实现过一遍，再去用polyfill会出现安全隐患。
+```
+
+### 9.什么是polyfill？怎么用？
+
+```
+1.帮助我们更好的去使用JS新特性，像promise，generator，这些特性有些浏览器是不认识的，运行代码时就会报错，这时候我们用polyfill来填充补丁，浏览器就可以识别了。
+2.本质其实就是帮我们去实现一遍。
+3.缺点就是打包过后的代码帮我们增加了许多代码，体积变大
+
+用法：
+	1.安装， npm i  @babel/polyfill
+		但现在推荐安装core-js和regenerator-runtime，因为polyfill已经过时了
+	2.在babel.config.js中配置
+module.exports = {
+  presets: [
+    ["@babel/preset-env", {
+      // false: 不用任何的polyfill相关的代码
+      // usage: 代码中需要哪些polyfill, 就引用相关的api
+      // entry: 手动在入口文件中导入 core-js/regenerator-runtime, 根据目标浏览器引入所有对应的polyfill
+      useBuiltIns: "entry",
+      corejs: 3
+    }],
+    ["@babel/preset-react"]
+  ],
+  // plugins: [
+  //   ["@babel/plugin-transform-runtime", {
+  //     corejs: 3
+  //   }]
+  // ]
+}
+	3.然后再文件中引入
+	import "core-js/stable";
+	import "regenerator-runtime/runtime";
+```
+
