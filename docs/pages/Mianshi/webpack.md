@@ -126,6 +126,35 @@ module.exports = {
 ### 12.性能优化的点
 
 ```
-1.devServer中设置compress为true，可以压缩打包后的文件，传输成本小
+1.devServer中设置compress为true，可以压缩打包后的文件，传输成本小。
+2.代码分离，提升首页渲染速度
+```
+
+### 13.小知识点
+
+```
+1.entry的值并不是相对于改文件的相对路径，而是context配置路径（官方要求绝对路径）
+```
+
+### 14.webpack如何做配置分离
+
+```
+1.我的策略是先把配置类型分为3种：
+	1.公共配置
+	2.开发/运行模式配置
+	3.生成模式配置
+2.把运行模式需要的配置放入单独一个文件，一般以webpack.dev.js命名
+3.把生产模式下需要的配置放入单独的文件，一般以webpack.prod.js命名
+4.公共文件需要做的事情
+	1.把公共配置写好，使用。
+	2.module.exports = function(env) { } 写成功函数，便于使用mode的值
+	3.根据env.production去判断是否为生产环境
+	4.导入merge模块去合并，使commonConfig与生产配置或者运行配置合并
+	5.返回这个配置并运用
+5.有些时候还需要配置一些babel.config.js相关的插件：
+	1.比如HMR模块热更新需要的插件，是运行环境才需要"react-refresh/babel"
+	2.根据process.env.NODE_ENV去判断当前的模式
+6.然后在package.json里面去指定哪个webpack文件去打包/运行项目 
+	1.通过--config
 ```
 
