@@ -1,7 +1,7 @@
 ---
 home: true
 heroImage: /avatar.png
-heroText: 邱模建的前端记录
+heroText: coderqmj的前端记录
 tagline: 一点一滴都是进步
 actionText: 马上进入 →
 actionLink: /pages/JavaScript/实现拖拽.md

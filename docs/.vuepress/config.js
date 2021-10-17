@@ -1,6 +1,6 @@
 module.exports = {
-  title: '邱模建的博客',
-  desription: '邱模建的前端记录',
+  title: 'coderqmj的博客',
+  desription: 'coderqmj的前端记录',
   head: [ // 注入到当前页面的 HTML <head> 中的标签
     ['link', { rel: 'icon', href: '/avatar.png' }], // 增加一个自定义的 favicon(网页标签的图标)
   ],
@@ -27,7 +27,7 @@ module.exports = {
       { text: 'LeetCode', link: 'https://leetcode-cn.com/u/2vgrNDufDX/' },
 
       //格式三：跳转至外部网页，需http/https前缀
-      { text: 'Github', link: 'https://github.com/zuogerenba' },
+      { text: 'Github', link: 'https://github.com/coderqmj' },
     ],
 
     //侧边导航栏：会根据当前的文件路径是否匹配侧边栏数据，自动显示/隐藏
