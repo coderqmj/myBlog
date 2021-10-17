@@ -62,6 +62,7 @@ module.exports = {
             ['../pages/JavaScript/玩转Promise.md', '玩转Promise'],
             ['../pages/JavaScript/this全面解析.md', '邂逅this'],
             ['../pages/JavaScript/手写常用方法.md', '手写常用方法'],
+            ['../pages/JavaScript/项目常用方法.md', '项目常用方法'],
             ['../pages/JavaScript/ES5继承方式.md', 'ES5继承总结'],
             ['../pages/JavaScript/数组字符串对象.md', '数组/字符串/对象操作方法'],
             ['../pages/JavaScript/执行机制.md', '执行机制'],
