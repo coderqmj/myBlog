@@ -188,6 +188,16 @@ module.exports = {
           ]
         },
         {
+          title: '三方库',
+          collapsable: true,
+          sidebarDepth: 2, 
+          children: [
+            ['../pages/TripLib/qs.md','qs'],
+            ['../pages/TripLib/react-query.md','react-query'],
+            ['../pages/TripLib/react-router-dom.md','react-router-dom'],
+          ]
+        },
+        {
           title: '实习遇到的问题及成长',
           collapsable: true,
           sidebarDepth: 2, 
