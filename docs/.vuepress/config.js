@@ -71,6 +71,7 @@ module.exports = {
             ['../pages/JavaScript/axios二次封装.md', 'axios二次封装'],
             ['../pages/JavaScript/JS垃圾回收机制.md', 'JS垃圾回收机制'],
             ['../pages/JavaScript/解剖Map对象.md', '解剖Map对象'],
+            ['../pages/JavaScript/重学JS.md', 'JS高级'],
           ]
         },
         {
