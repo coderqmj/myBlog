@@ -1823,7 +1823,7 @@ onClick={e => setCount(count + 1)}代表了可以直接修改数据
 setCount((prevCount) => prevCount + 10)
 ```
 
-原理适合setState一样的，传入参数为函数时可以拿到先前值，进行多次累加也会进行合并,比如：
+原理是和setState一样的，传入参数为函数时可以拿到先前值，进行多次累加也会进行合并,比如：
 
 - 传参不是函数多次累加只会操作一次
 - 传参时函数就会累加
@@ -2000,7 +2000,7 @@ export default function home() {
 }
 ```
 
-### 115.useCallback
+### 11.5.useCallback
 
 作用：性能优化，他会返回函数的memoized(记忆值)，在依赖不变的情况下，多次定义的时候值是相同的
 
@@ -2015,7 +2015,7 @@ export default function home() {
 例子1：
 
 - 这种代码并不能阻止函数的创建过程
-- 所有并没有做优化
+- 所以并没有做优化
 
 ```js
 import React, { useState, useCallback } from 'react'
@@ -2038,6 +2038,171 @@ export default function CallBackHook01() {
 ```
 
 例子2:
+
+### 11.6 useMemo
+
+- useMemo的目的也是为了进行性能优化
+- useMemo返回的也是一个memoized（记忆的）值
+- 在依赖不变的情况下，多次定义的时候，返回值是相同的
+
+```js
+const memoizedValue = useMemo(() => sum(a, b), [a, b]) // a和b没有改变的情况下都是返回原来的值
+```
+
+#### 使用场景
+
+**复杂计算**
+
+- 假设一个组件上有一个状态，也有一个计算求和的函数。
+- 只要是每一次状态发生了改变，都会引起该组件重新渲染，不关求和函数每次算的是否都一样都会重新计算一次函数。
+- 这显然是不合理的，因为其他状态改变引起一个没必要的计算，显然是浪费性能的
+
+```jsx
+// 下面代码中sum函数会因为show的改变而执行多次
+import React, { useState } from 'react';
+
+const sum = (a,b) =>{
+  return  a + b
+};
+
+function App() {
+  const [show, setShow] = useState(false);
+  const total = sum(1, 2)
+  
+  return (
+    <div className="App">
+      <span>{total}</span>
+      <button onClick={() => setShow(!show)}>改变状态</button>
+    </div>
+  );
+}
+
+// 下面代码中sum的重新计算和其他状态无关，只和传入的依赖有关
+import React, { useState, useMemo } from 'react';
+
+const sum = (a,b) =>{
+  return  a + b
+};
+
+function App() {
+  const [show, setShow] = useState(false);
+  let num1 = 1;
+  let num2 = 2
+  const total = useMemo(() => sum(num1,num2), [num1, num2])
+  
+  return (
+    <div className="App">
+      <span>{total}</span>
+      <button onClick={() => setShow(!show)}>改变状态</button>
+    </div>
+  );
+}
+```
+
+**传入子组件引用类型**
+
+- 有两个组件，分别为父子组件关系
+- 父组件有两个变量a，b，b传给了子组价，当父组件的a发生了改变，b不变的情况下
+  - 父组件重新渲染，子组件也重新渲染。
+  - 子组件没必要渲染但渲染了，造成性能方面的损耗
+- 解决办法：
+  - 使用memo包裹子组件，同时使用useState定义info信息
+  - 使用memo包裹子组件，同时使用
+
+```jsx
+// 第一个版本，直接梭哈，每次重复渲染，性能消耗高
+import React form 'react';
+
+const ShowInfo = (props) => {
+	console.log('子组件渲染');
+  return <span>名字：{props.info.name} 年龄：{props.info.age}</span>
+}
+
+export default function MemoDemo() {
+	console.log('父组件渲染');
+  const [show, setShow] = useState(false);
+  const info = { name: 'qmj', age: 18 }
+  return (
+  	<>
+    	<ShowInfo info={info} />
+    	<button onClick={() => setShow(!show)}>点击展示</button>
+    </>
+  )
+}
+
+// 版本2，使用memo，但是传入的是一个对象，只会千层比较，每次父组件的info都被重新生成了，所以还是重新渲染
+import React form 'react';
+
+const ShowInfo = memo((props) => {
+	console.log('子组件渲染');
+  return <span>名字：{props.info.name} 年龄：{props.info.age}</span>
+})
+
+export default function MemoDemo() {
+	console.log('父组件渲染');
+  const [show, setShow] = useState(false);
+  const info = { name: 'qmj', age: 18 }
+  return (
+  	<>
+    	<ShowInfo info={info} />
+    	<button onClick={() => setShow(!show)}>点击展示</button>
+    </>
+  )
+}
+
+// 版本3，使用useMemo包裹信息
+import React form 'react';
+
+const ShowInfo = memo((props) => {
+	console.log('子组件渲染');
+  return <span>名字：{props.info.name} 年龄：{props.info.age}</span>
+})
+
+export default function MemoDemo() {
+	console.log('父组件渲染');
+  const [show, setShow] = useState(false);
+  // const info = { name: 'qmj', age: 18 }
+  const info = useMemo(() => {
+    return { name: 'qmj', age: 18 }
+  }, [依赖])
+  return (
+  	<>
+    	<ShowInfo info={info} />
+    	<button onClick={() => setShow(!show)}>点击展示</button>
+    </>
+  )
+}
+```
+
+### 11.7useCallback和useMemo对比
+
+- usecallback是对函数进行缓存，而useMemo是对返回值（对象之类的）进行缓存
+- 如果useMemo返回的是一个函数，那么就使用useMemo实现了usecallback的功能，进行了互相转换
+
+### 11.8自定义hook
+
+- 自定义Hook本质上只是一种对函数代码逻辑的抽取，严格意义上来说，这并不属于React的特性
+
+#### 例子
+
+- 实现一个打印组件创建和销毁的hoo
+- 实现方式很简单，只需要在每个组件上使用useEffect就行，把公共代码抽离，使用use开头命名
+- 不使用use开头命名的函数无法使用React提供的几个hook，会报错
+
+```js
+// 自定义打印创建与销毁的hook
+function useLoggingLife(name) {
+	useEffect(() => {
+    console.log('组件被创建');
+    
+    return () => {
+      console.log('组件被销毁')
+		}
+  }, [])
+}
+```
+
+
 
 ## 十二、react-router
 

@@ -326,4 +326,5 @@ const obj1 = JSON.parse(objString, (key, value) => {
 ### 3.1Storage
 
 - WebStorage主要提供了一种机制，可以让浏览器提供一种比cookie更直观的key、value存储方式
-  - localStorage：本地存储，提供的是一种永久存储方法
+  - localStorage：本地存储，提供的是一种永久存储方法，关闭网页再进来还是会保存状态
+  - sessionStorage：回话存储，关闭页面再进来就没有了。
