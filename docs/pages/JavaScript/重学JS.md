@@ -328,3 +328,125 @@ const obj1 = JSON.parse(objString, (key, value) => {
 - WebStorage主要提供了一种机制，可以让浏览器提供一种比cookie更直观的key、value存储方式
   - localStorage：本地存储，提供的是一种永久存储方法，关闭网页再进来还是会保存状态
   - sessionStorage：回话存储，关闭页面再进来就没有了。
+
+## 四、ES6的类
+
+### 1.类的定义方式
+
+```js
+// 类的声明
+class Person {
+  
+}
+function Person {
+  
+}
+// 类的表达式
+const Animal = class {
+  
+}
+const Animal = Function() {
+  
+}
+```
+
+#### ES6类的特点
+
+- `typeof Persion`是function
+- 有原型，原型上也有constructor
+- 是个语法糖，本质上做的事情就是和函数类一样
+
+### 2.Class的构造函数
+
+函数类是可以直接传递参数的，因为是个函数，但是class怎么传递参数？
+
+- class里面有专属的constructor函数去接收参数
+- 一个类只有一个构造函数
+
+```js
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+}
+let p1 = new Person("qmj", 18 )
+// new 之后做的事情
+1.在内存中创建一个对象
+2.将类的原型prototype赋值给创建出来的对象 moni.__proto__ = Person.prototype
+3.将对象赋值给函数的this
+4.执行函数体中的代码
+5.自动返回创建出来的对象
+```
+
+### 3.Class类的方法定义
+
+**普通方法**：通过实例去调用
+
+**访问器**：供外部访问，修改属性
+
+**静态方法**：不用通过实例去调用，直接使用类名去调用就可以
+
+```js
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+// 普通方法  
+  running() {
+    
+  }
+  
+// 访问器
+  get name() {
+    return this.name;
+  }
+  
+  set name(newName) {
+		this.name = newName
+  }
+}
+
+// 静态方法
+	static createPerson() {
+    
+  }
+```
+
+### 4.类的继承
+
+使用**extends**关键字即可
+
+JS引擎在解析子类的时候有要求，如果有实现继承，那么子类的构造方法中，在使用this之前就需要super  
+
+子类传参多于父类，就需要使用**super**关键字
+
+```js
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+}
+// 错误的继承
+class Student extends Person {
+  constructor(name, age, sno) {
+    this.name = name;  // 这样的话会报错
+    this.age = age;
+  }
+}
+// 正确的继承
+class Student extends Person {
+  constructor(name, age, sno) {
+    super(name, age)
+ 		this.sno = sno;
+  }
+}
+```
+
+#### 方法可以被重写
+
+- 包括静态方法 
+- 也可以通过super.xxx复用父类的逻辑
+

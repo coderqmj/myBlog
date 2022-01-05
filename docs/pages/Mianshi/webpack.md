@@ -18,6 +18,9 @@
 		2.plugin是用于执行更加广泛的任务，打包优化，资源管理，环境变量注入等
 	1.loader中可以使用插件，且plugins是一个数组，一个loader可以使用多个plugin
 	2.loader放在module中，plugin放在plugins中
+	例子：
+		1.加载css文件需要loader，但是把多个CSS文件合并成1和就需要plugin
+		2.每次打包后希望删除之前目录的文件，重新生成新的文件夹，就需要clean-webpack-plugin插件
 ```
 
 ### 5.webpack5新特性
@@ -158,3 +161,4 @@ module.exports = {
 	1.通过--config
 ```
 
+### 15.babel和Polyfill的区别和关系
