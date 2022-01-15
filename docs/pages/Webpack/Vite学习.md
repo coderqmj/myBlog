@@ -62,11 +62,11 @@ module.exports = {
 3. 但是这个请求会被Connect拦截，但返回的并不是我们直接在项目中编写的ts或者less文件。
 4. 而是返回我们编写的文件经过vite转换的es6js代码的文件（less文件也会被转成js）
 
-![](./images/vite转发原理.png)
+![](./images/vite1.png)
 
 观察对比vite转换前后的文件
 
-<img src="./images/vite编译前less.png" style="zoom:50%;" /><img src="./images/vite编译后less.png" style="zoom:50%;" />
+<img src="./images/viteless1.png" style="zoom:50%;" /><img src="./images/viteless2.png" style="zoom:50%;" />
 
 ## 五、对vue 的支持
 
