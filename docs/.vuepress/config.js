@@ -167,7 +167,7 @@ module.exports = {
           collapsable: true,
           sidebarDepth: 2, 
           children: [
-            ['../pages/TypeScript/Typescript.md','TypeScript笔记'],
+            ['../pages/TypeScript/TypeScript.md','TypeScript笔记'],
           ]
         },
         {
