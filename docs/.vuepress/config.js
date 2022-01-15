@@ -109,11 +109,12 @@ module.exports = {
           ]
         },
         {
-          title: 'Webpack',
+          title: '构建工具',
           collapsable: true,
           sidebarDepth: 2, 
           children: [
-            ['../pages/Webpack/学习笔记.md', 'Webpack学习笔记']
+            ['../pages/Webpack/学习笔记.md', 'Webpack学习笔记'],
+            ['../pages/Webpack/Vite学习.md', 'Vite学习'],
           ]
         },
         {
