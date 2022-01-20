@@ -232,6 +232,7 @@ module.exports = {
             ['../pages/suosui/浏览器兼容性.md','浏览器兼容性'],
             ['../pages/suosui/代码规范.md','代码规范'],
             ['../pages/suosui/CodeReview.md','CodeReview'],
+            ['../pages/suosui/项目搭建.md','项目搭建'],
             // ['../pages/suosui/个人前端学习经历.md','个人前端学习经历'],
           ]
         },
