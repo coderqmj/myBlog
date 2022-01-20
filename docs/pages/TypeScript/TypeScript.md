@@ -922,7 +922,7 @@ type IBar = { // 直接报错
 
 - 可以在编辑器上看见p1是报错的
 - 但是p2又是正常的，这非常奇怪，编译不报错，且可以正常运行
-- <img src="./images/字面量报错.png" style="zoom:50%;" />
+- <img src="./images/ts3.png" style="zoom:50%;" />
 
 ```typescript
 interface IPerson {
@@ -957,7 +957,7 @@ const p2: IPerson = info;
   - 意思是进行类型检测时，把引用（在这里是info）的属性擦除多余的属性，依然满足IPerson的检测条件，就会通过
   - 而要是擦除多余的，但是不满足的话还是会报错的。比如少属性，或者是类型不对
 
-<img src="./images/字面量报错2.png" style="zoom:50%;" />
+<img src="./images/ts2.png" style="zoom:50%;" />
 
 
 
@@ -1058,7 +1058,7 @@ const p1: IPerson<string, number> = {
 
   - 如果参数没有length属性肯定是不行，所以我们应该对泛型做一些约束，使其拥有length这个属性
 
-  <img src="./images/泛型约束1.png" style="zoom:50%;" />
+  <img src="./images/ts1.png" style="zoom:50%;" />
 
   ```typescript
   // 这种情况就直接编译不通过
@@ -1132,7 +1132,7 @@ time.format('')
 
   - 像document这个，就是VSCode帮我们内置了，不会报错
 
-  ![](./images/内置声明.png)
+  ![](./images/ts0.png)
 
 
 
