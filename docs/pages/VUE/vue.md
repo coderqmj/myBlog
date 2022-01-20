@@ -108,7 +108,7 @@ export default defineComponent({
 
 ## 二、Composition API
 
-::: tip
+::: tip 背景相关
 
 options编写组件的时候逻辑非常分散，而Composition可以把同一个逻辑关注点的相关代码放一起。我们在vue组件中的setup函数编写这些逻辑。
 
@@ -118,20 +118,28 @@ options编写组件的时候逻辑非常分散，而Composition可以把同一�
 
 ### 1.vue2和vue3的区别
 
-::: details
+::: details 点击查看解析
+
+```
 1.options Api 和 Composition API
 	1.options编写组件的时候逻辑非常分散，而Composition可以把同一个逻辑关注点的相关代码放一起
+```
+
 :::
 
 ### 2.options Api的介绍及缺陷
 
-::: details
+::: details 点击查看解析
+
+```
 1.特点是对应的属性中编写对应的功能模块
 	1.比如data定义数据，methods定义方法，计算属性，watch监听，生命周期
 2.弊端：
 	1.实现某一个功能时，对应的代码逻辑被拆分到各个属性中
 	2.组件变大，复杂时，逻辑关注点的列表就会增长，同一个功能的逻辑会被拆分的很分散
 	3.这样就造成了其组价的可阅读性较差
+```
+
 :::
 
 
