@@ -1,6 +1,6 @@
 ### 一、TypeScript的初体验
 
-#### 1.1TS的环境
+### 1.1TS的环境
 
 - TS最终会被编译成JS来运行，所以我们需要搭建对应的环境：
   - 安装tsc: `npm i typescript -g` , 执行 `tsc --version`可以查看版本号
@@ -21,12 +21,12 @@ foo(123) // 报错
 foo('hello') 正确
 ```
 
-#### 1.2执行ts
+### 1.2执行ts
 
 - `tsc 文件名` => 会生成一个同名的js文件，但里面的代码是ts经过转换生成的js代码
 - 如果检查到传入非正确类型的值，会编译不通过
 
-#### 1.4搭建ts环境
+### 1.4搭建ts环境
 
 - webpack搭建
   - 安装并使用ts-loader `tnpm i ts-loader typescript -D`
@@ -74,7 +74,7 @@ module.exports = {
 - ts-node库直接执行
   - npm i ts-node tslib @types/node -g
 
-#### 1.3一些思考与感悟
+### 1.3一些思考与感悟
 
 - 默认情况下，同一个目录下的ts文件在同一个作用域，所以a目录下的a1和a2文件都命名了name这个变量，会提示报警
 - 解决办法：
@@ -82,7 +82,7 @@ module.exports = {
 
 ### 二、Typescript基础
 
-#### 2.1变量声明
+### 2.1变量声明
 
 - 在TS中定义变量需要指定 **标识符** 的类型
 - 所以完整的声明格式如下：
@@ -111,7 +111,7 @@ foo = "123" // 报错，因为类型推导
 - ts还有一个特性就是类型推导
   - 在ts文件中给一个变量赋值了number类型，再给他赋值string类型，就会报错，即使没有对该变量进行定义类型
 
-#### 2.2number类型
+### 2.2number类型
 
 - 十进制，二进制，八进制都可以定义
 
@@ -129,7 +129,7 @@ let num4: number = 0x100
 console.log(num1, num2, num3, num4)
 ```
 
-#### 2.3boolean类型
+### 2.3boolean类型
 
 - 只有true和false
 
@@ -138,7 +138,7 @@ let flag: boolean = true
 flag = 20 > 30
 ```
 
-#### 2.4string类型
+### 2.4string类型
 
 ```typescript
 let message1: string = 'hello world'
@@ -157,7 +157,7 @@ export {}
 
 ```
 
-#### 2.5array类型的使用
+### 2.5array类型的使用
 
 - 思考一个问题，定义一个数组，那么数组中应该存放的是什么元素呢？
 - 但是在Typescript中，数组存放的数据类型最好是单一固定的
@@ -173,7 +173,7 @@ const names: Array<string> = []  // 一般不推荐这种写法
 const names2: string[] = [] // 推荐这写法
 ```
 
-#### 2.6object类型的使用
+### 2.6object类型的使用
 
 - 在ts文件中这样定义，每一个key都会被类型推导，进行类型的限制
 
@@ -184,21 +184,21 @@ const info = {
 }
 ```
 
-#### 2.7Typescript-any类型
+### 2.7Typescript-any类型
 
 - 某些情况下，我们无法确定该数据的类型，或者以后有可能涉及到类型的修改，才会使用any
 
-#### 2.8Typescript-unknown类型
+### 2.8Typescript-unknown类型
 
 - 用法和any差不多，但是比any更安全点，因为unknown类型的数据不可以拿出去用，复制，传参都不可以。
 - 而any是可以的
 
-#### 2.9Typescript-void类型
+### 2.9Typescript-void类型
 
 - 通常指一个函数没有返回值，那么它的返回值就是void类型：
   - 可以把null和undefined复制给void类型，
 
-#### 2.10对象类型
+### 2.10对象类型
 
 ```typescript
 function printPoint(point: {x: number, y: number}) {
@@ -209,7 +209,7 @@ printPoint({x: '123'}) // 报错
 printPoint({x: 1, y: 2}) // 正确
 ```
 
-#### 2.11可选类型
+### 2.11可选类型
 
 ```typescript
 function printPoint(point: {x: number, y: number, z?: number}) {
@@ -221,7 +221,7 @@ printPoint({x: 1, y: 2}) // 正确
 printPoint({x: 1, y: 2, z: 3}) // 正确
 ```
 
-#### 2.12联合类型
+### 2.12联合类型
 
 - TS允许我们使用多种运算符，从现有类型中构建新类型
 
@@ -233,7 +233,7 @@ function foo(id: number|string) {
 
 ### 三、TS特性
 
-#### 3.1类型断言as
+### 3.1类型断言as
 
 - 有些时候TS无法获取具体的类型信息，这个我们需要使用类型断言（Type Assertions）。
   - 比如我们通过document.getElementById，TS只知道该函数会返回HTMLElement，但并不知道它具体的类型
@@ -284,7 +284,7 @@ function foo(message?: string) {
 }
 ```
 
-#### 3.2  `??` 和 `!!`的作用
+### 3.2  `??` 和 `!!`的作用
 
 - !!操作符：
   - 将一个其他类型转换成Boolean类型
@@ -311,7 +311,7 @@ let message: string|null = null;
 const content = message ?? '你好啊';
 ```
 
-#### 3.3字面量类型
+### 3.3字面量类型
 
 - 如果按照第二行代码去限制类型，那么就不能改变其他值，那又有什么意义呢？
 - 字面量类型必须结合联合类型，才有意义。
@@ -327,7 +327,7 @@ let align: 'left' | 'right' | 'center' = 'left'
 type Alignment = 'left' | 'right' | 'center'
 ```
 
-#### 3.4字面量推理
+### 3.4字面量推理
 
 - 思考下面场景：
   - 调用的时候会第二个参数直接报错，因为这样只对method限制为string，而函数是要求 `GET`  和 `POST`
@@ -370,7 +370,7 @@ const option = {
 } as const 
 ```
 
-#### 3.5类型缩小
+### 3.5类型缩小
 
 - 类型缩小的英文是Type Narrowing
 - 可以使用 typeof padding === 'number'的判断语句来改变TS执行路径
@@ -404,7 +404,7 @@ function printDir(dir: Dir) {
 }
 ```
 
-#### 3.6TS函数类型
+### 3.6TS函数类型
 
 - 函数类型的注解怎么写呢？
 
@@ -457,7 +457,7 @@ sum(20, 30);
 sum(20, 30, 40);
 ```
 
-#### 3.7函数联合类型
+### 3.7函数联合类型
 
 - 如果函数传入连个参数，是联合类型，然后进行运算，会造成代码编译错误，甚至最后的返回值也无法确定类型
 - 那应该怎么办？答案是重载
@@ -473,7 +473,7 @@ function (num1: number | string, num2: number | string) {
 }
 ```
 
-#### 3.8函数的重载
+### 3.8函数的重载
 
 ```js
 // 函数的重载: 函数的名称相同, 但是参数不同的几个函数, 就是函数的重载
@@ -500,7 +500,7 @@ console.log(result2)
 
 ### 四、TS类的使用
 
-#### 4.1类的定义
+### 4.1类的定义
 
 - constructor初始化类，必须要传入
 - 初始化的方式有两种：
@@ -528,7 +528,7 @@ console.log(p.age)
 p.eating()
 ```
 
-#### 4.2类的继承
+### 4.2类的继承
 
 - 多态、继承、封装
 - 继承时多态的前提
@@ -616,7 +616,7 @@ stu.eating()
 
 
 
-#### 4.3类的多态
+### 4.3类的多态
 
 - 最终执行的是重写之后的action
 
@@ -654,7 +654,7 @@ function makeActions(animals: Animal[]) {
 makeActions([new Dog(), new Fish(), new Person()])
 ```
 
-#### 4.4类的修饰符
+### 4.4类的修饰符
 
 - 修饰符一共有4个：public、private、protected，readonly默认的是public
 - public：
@@ -725,7 +725,7 @@ if (p.friend) {
 
 ### 五、接口的使用
 
-#### 5.1声明对象类型
+### 5.1声明对象类型
 
 当我们要在TS中定义对象并限制属性的类型时，我们可以通过类型（Type）别名来声明：
 
@@ -762,7 +762,7 @@ const[name,setName]=useState<string>
 
 
 
-#### 5.2索引类型
+### 5.2索引类型
 
 - 可以观察到下面键值对是有规律的，键是数字，值是字符串
 
@@ -788,7 +788,7 @@ const frontLanguage: IndexLanguage  = {
 }
 ```
 
-#### 5.3函数类型
+### 5.3函数类型
 
 - 之前可以通过type去定义函数，现在也可以使用接口去
 - 但是函数类型的接口形式可读性比较差，所以推荐type方法去定义
@@ -812,7 +812,7 @@ const add: CalcFn = (num1, num2) => {
 calc(20, 30, add)
 ```
 
-#### 5.4接口继承
+### 5.4接口继承
 
 - 接口是可以继承的，且是可以多继承
 
@@ -840,7 +840,7 @@ const action: IAction = {
 }
 ```
 
-#### 5.5交叉类型
+### 5.5交叉类型
 
 - 前面学习过联合类型，联合类型就是把可能用到的类型放在一起
 - 另一种组合类型的方式：交叉类型，使用 `&` 符号进行连接
@@ -883,9 +883,9 @@ const obj2: MyType2 {
 
 
 
-#### 5.6接口的实现
+### 5.6接口的实现
 
-#### 5.7interface和type的区别
+### 5.7interface和type的区别
 
 - interface和type都可以用来定义对象类型，那么在开发中，到底使用哪一个呢？
   - 如果定义非对象类型，推荐使用type，比如Direction、Alignment、一些Function
@@ -918,23 +918,238 @@ type IBar = { // 直接报错
 
 
 
-#### 5.8字面量赋值
+### 5.8字面量赋值
+
+- 可以在编辑器上看见p1是报错的
+- 但是p2又是正常的，这非常奇怪，编译不报错，且可以正常运行
+- <img src="./images/字面量报错.png" style="zoom:50%;" />
+
+```typescript
+interface IPerson {
+	name: string;
+  age: number;
+  height: number;
+}
+
+// 报错
+const p1: IPerson = {
+  name: 'qmj',
+  age :18,
+  height: 1.88,
+  address: "深圳市"
+}
+
+const info = {
+  name: 'qmj',
+  age :18,
+  height: 1.88,
+  address: "深圳市"
+}
+
+// p2没有报错
+const p2: IPerson = info;
+```
+
+**上面这种现象是为什么？中间发生了什么？**
+
+- 原因是当没有设置类型时，会进行类型推导，info就把4个类型都推导出来了。
+- 而info赋值给p2时，发生了freshness擦除操作，
+  - 意思是进行类型检测时，把引用（在这里是info）的属性擦除多余的属性，依然满足IPerson的检测条件，就会通过
+  - 而要是擦除多余的，但是不满足的话还是会报错的。比如少属性，或者是类型不对
+
+<img src="./images/字面量报错2.png" style="zoom:50%;" />
 
 
 
+### 5.9TS枚举类型
+
+- 枚举类型是TS特有的特性之一：
+  - 枚举类型就是将一组可能出现的值，一个个列举出来，定义在一个类型中，这个类型就是枚举类型
+  - 枚举允许开发者定义一组命名常量，常量可以是数字、字符串类型；
+- 关键字是 **enum**
+- 可读性比较强
+
+```typescript
+// 例子一，方向，多用于游戏开发？
+enum Direction {
+  LEFT,
+  RIGHT,
+  TOP,
+  BOTTOM
+}
+function turnDirection(direction: Direction) {
+  
+}
+
+turnDirection(Direction.LEFT);
+```
+
+## 六、泛型
+
+### 6.1认识泛型
+
+> 对于函数式编程是非常重要的。因为对于一个函数来说，参数的意义是非常重大的，没有参数，功能将变得非常单一。所以参数的类型也是非常有意义且重要的，在TS中我们不希望由函数本身去限制类型，希望由调用者去决定，否则功能变得单一。
+
+**一句话概括泛型就是将类型参数化**
+
+简单的例子：
+
+```typescript
+function sum<T>(num1: T): T {
+  return num1;
+}
+// 调用方式一：明确指定类型
+sum<number>(20);
+sum<{name: string}>({name: 'qmj'})
+sum<any[]>(["abc"])
+
+// 调用方式二：类型推导
+sum(50);
+sum("abc")
+```
+
+### 6.2泛型接受多个类型参数
+
+- 如果多个参数都是一样的，那么只需要写一个
+- 如果多个参数不一样，也支持写多个类型
+
+```typescript
+function sum<T, E>(sum1, sum2) {
+  return sum1 + sum2;
+}
+
+sum<number, string>(20, 'abc')
+```
+
+### 6.3泛型开发中的习惯
+
+- T: Type的缩写，类型
+- E，Element的缩写，元素
+- K、V：key和value 的缩写，键值对
+- O，Object的缩写，对象
+
+### 6.4泛型接口
+
+- 接口中每个元素的类型一般都是写死的，但如果想要更灵活点呢？
+
+```typescript
+// 也可以像函数一样设置默认值
+interface IPerson<T1 = string, T2 = number> {
+  name: T1,
+  age: T2,
+}
+  
+const p1: IPerson<string, number> = {
+  name: "qmj",
+  age: 18
+}
+
+```
 
 
 
+### 6.5泛型类的使用
+
+- 泛型既然可以在接口上使用，那就可以在类上使用f
+
+### 6.6泛型的类型约束
+
+- 有些时候我们想对函数做一些类似重载的功能，比如输出字符串或者数组长度的函数
+
+  - 如果参数没有length属性肯定是不行，所以我们应该对泛型做一些约束，使其拥有length这个属性
+
+  <img src="./images/泛型约束1.png" style="zoom:50%;" />
+
+  ```typescript
+  // 这种情况就直接编译不通过
+  function getLength<T>(e: T) {
+    return e.length;
+  }
+  
+  // 应该用下面的写法
+  interface ILength {
+    length: number;
+  }
+  
+  function getLength<T extends ILength>(e: T) {
+    return e.length;
+  }
+  
+  console.log(getLength("abc"))
+  ```
+
+  
+
+## 七、TS其它补充
+
+### 7.1TS模块化开发
+
+- ESModule本身就是支持的，和js是一样的
+
+#### namespace命名空间
+
+- namespace在TS早期时，称为内部模块，主要目的是将一个内部模块再进行作用域的划分，防止一些命名冲突的问题
+- 一句话概括就是，在模块中划分模块
+
+例子：
+
+- 两个format函数，一个是格式化时间，一个是格式化价格，都用相同的函数名format
+
+```typescript
+export namespace time {
+  export function format(time: string) {
+    return '14: 32'
+  }
+}
+  
+export namespace price {
+  export function format(time: string) {
+    return '14: 32'
+  }
+}
+  
+// 使用的时候就可以取用命名空间里面的函数
+time.format('')
+```
+
+### 7.2声明
+
+- 我们npm i axios后可以直接导入使用并且不报错，但是安装lodash后导入，会报错：
+  - could not find a declaration file for module ‘lodash’
+- 原因是要看这个模块在TS中有没有被声明过，声明过就是不报错的
+- 上面那个例子的原因就是axios被声明过了，但是lodash没有声明
+- 那么我们应该在哪里声明？怎么去声明呢？
+
+#### **.d.ts文件**
+
+- 它是用来做类型的声明，它仅仅用于类型检测，告知TS我们有哪些类型，就不用去报错了
+
+#### 声明来源
+
+- 一般来自三个地方，内置，外部定义，自定义
+
+- 内置：
+
+  - 像document这个，就是VSCode帮我们内置了，不会报错
+
+  ![](./images/内置声明.png)
 
 
 
+- 外部声明：
+  - 像我们安装axios后，在modules中可以发现`.d.ts`文件中有许多interface，说明第三方库axios对类型做了声明
+  - 而lodash为啥不行？因为他没有类型声明
+  - 比如说想要在node项目中使用，就需要 npm i node 然后 npm i @types/node --save-dev
+  - lodash也和node同理，安装完npm i @types/lodash --save-dev 就不会报错了
+- 自定义：
+  - 外部包也没有，内置也没有，就需要自己去编写了
+  - 编写方式如下，之后在ts文件中就可以使用lodash的join了
 
-
-
-
-
-
-
+```typescript
+declare module 'lodash' {
+  export function join(arr: any[]): void
+}
+```
 
 
 
