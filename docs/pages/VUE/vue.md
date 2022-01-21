@@ -110,9 +110,134 @@ export default defineComponent({
 
 ::: tip 背景相关
 
-options编写组件的时候逻辑非常分散，而Composition可以把同一个逻辑关注点的相关代码放一起。我们在vue组件中的setup函数编写这些逻辑。
+options编写组件的时候逻辑非常分散，我们处理一个逻辑时，需要跳转到不同模块中去处理，而Composition可以把同一个逻辑关注点的相关代码放一起。我们在vue组件中的setup函数编写这些逻辑。
 
 :::
+
+### 2.1认识Composition API
+
+- 从背景中得知Composition API要帮助我们完成什么，那具体要怎么做？
+  - 为了开始使用Composition API，我们需要一个可以实际使用它的地方（编写代码的地方）
+  - 在vue组件中，这个位置就是**setup函数**
+- setup其实就是组件的另外一个选项
+  - 只不过这个选项强大到我们可以用它来替代之前所编写的大部分其他选项
+  -  比如methods、computed、watch、data、生命周期等等;
+
+### 2.2认识setup
+
+#### setup的参数
+
+- 我们先来研究一个setup函数的参数，它主要**有两个参数**: 
+  - 第一个参数:props
+  - 第二个参数:context
+- props非常好理解，它其实就是**父组件传递过来的属性**会被**放到props对象**中，我们在**setup中如果需要使用**，那么就可以直接**通过props参数获取**
+  - 对于定义props的类型，我们还是和之前的规则是一样的，在props选项中定义
+  - 并且在template中依然是可以正常去使用props中的属性，比如message
+  - 如果我们在setup函数中想要使用props，那么不可以通过 this 去获取
+  - 因为props有直接作为参数传递到setup函数中，所以我们可以直接通过参数来使用即可;
+- 另外一个参数是context，我们也称之为是一个**SetupContext**，它里面**包含三个属性**:
+  -  **attrs**:所有的非prop的attribute
+  -  **slots**:父组件传递过来的插槽(这个在以渲染函数返回时会有作用，后面会讲到); 
+  - **emit**:当我们组件内部需要发出事件时会用到emit(因为我们不能访问this，所以不可以通过 this.$emit发出事件);
+
+#### setup的返回值
+
+- setup既然是一个函数，那么它也可以有**返回值**，**它的返回值用来做什么呢?**
+  - setup的返回值可以在模板template中被使用;
+  - 也就是说我们可以通过setup的返回值来替代data选项
+- 甚至是我们可以**返回一个执行函数**来**代替在methods中定义的方法**:
+- 但是对与setup里面的数据，使用setup里面的方法去改变它的时候，做不到响应式
+  - 因为对于一个定义的变量来说，默认情况下，Vue并不会跟踪它的变化，来引起界面的响应式操作;
+
+![](./imgs/setupClick01.png)
+
+
+
+![](./imgs/setupClick02.png)
+
+
+
+
+
+
+
+
+
+#### setup不可以使用this
+
+- 因为setup的调用发生在data、computed或者methods被解析之前，这些东西无法在setup中获取
+- 调用顺序
+  1. 调用 createComponentInstance 创建组件实例
+  2. 调用 setupComponent 初始化component内 部的操作
+  3. 调用 setupStatefulComponent 初始化有状态 的组件
+  4. 在 setupStatefulComponent 取出了 setup 函 数
+  5. 通过callWithErrorHandling 的函数执行 setup
+
+#### Reactive API
+
+- 如果想为在setup中定义的数据提供响应式的特性，那么我们可以**使用reactive的函数**
+  - 使用reactive函数处理我们的数据之后，数据再次被使用时就会进行依赖收集;
+  - 当数据发生改变时，所有收集到的依赖都是进行对应的响应式操作(比如更新界面);
+  - 事实上，我们编写的data选项，也是在内部交给了reactive函数将其编程响应式对象的;
+
+![](./imgs/reactiveApi01.png)
+
+
+
+- reactive API对**传入的类型是有限制的**，它要求我们必须传入的是**一个对象或者数组类型**:
+
+  - 如果我们传入一个基本数据类型(String、Number、Boolean)会报一个警告;
+
+- 这个时候Vue3给我们提供了**另外一个API:ref API**
+
+  - ref 会返回一个可变的响应式对象，该对象作为一个 **响应式的引用** 维护着它内部的值，这就是ref名称的来源;
+  - 它内部的值是在ref的 value 属性中被维护的;
+  - ref是可以放入reactive中的，也可以自动解包
+
+  ![](./imgs/refApi01.png)
+
+
+
+#### **readonly**
+
+-  在readonly的使用过程中，有如下规则：
+  - readonly返回的对象都是不允许修改的
+  - 但是经过readonly处理的原来的对象是允许被修改的
+    - 比如 const info = readonly(obj)，info对象是不允许被修改的;
+    - 当obj被修改时，readonly返回的info对象也会被修改;
+    - 但是我们不能去修改readonly返回的对象info;
+  - 其实本质上就是readonly返回的对象的setter方法被劫持了而已;
+- 应用场景：
+  - 传值给其他组件的时候，往往只希望别人使用这个值，不希望去改变它
+
+![](./imgs/readonly01.png)
+
+#### toRefs
+
+- 如果我们使用**ES6的解构语法**，对**reactive返回的对象进行解构获取值**，那么之后无论是**修改结构后的变量**，还是**修改reactive**
+
+  **返回的state对象**，**数据都不再是响应式**的:
+
+- 那么有没有办法**让我们解构出来的属性是响应式**的呢?
+
+  - Vue为我们提供了一个toRefs的函数，可以将reactive返回的对象中的属性都转成ref; 
+  - 那么我们再次进行结构出来的 name 和 age 本身都是 ref的;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ## 面试
 
