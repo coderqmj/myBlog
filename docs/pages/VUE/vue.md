@@ -223,6 +223,302 @@ options编写组件的时候逻辑非常分散，我们处理一个逻辑时，�
   - Vue为我们提供了一个toRefs的函数，可以将reactive返回的对象中的属性都转成ref; 
   - 那么我们再次进行结构出来的 name 和 age 本身都是 ref的;
 
+#### computed
+
+- vue2中的计算属性
+
+```vue
+<template>
+  <div>
+    <el-button type="primary" @click="fullName.set('qiu mojian1')"
+      >按钮</el-button
+    >
+    <span>{{ fullName.get() }}</span>
+  </div>
+</template>
+
+<script lang="ts">
+import { computed, defineComponent, reactive, ref } from 'vue';
+import { demoMixin } from '@/mixins/demo';
+
+export default defineComponent({
+  mixins: [demoMixin],
+  components: {},
+  setup() {
+    const firstName = ref('qiu');
+    const lastName = ref('mojian');
+    const fullName = computed(() => ({
+      get: () => {
+        return firstName.value + ' ' + lastName.value;
+      },
+      set: (newName: string): void => {
+        console.log(newName);
+        const names = newName.split(' ');
+        firstName.value = names[0];
+        lastName.value = names[1];
+      }
+    }));
+    return { fullName };
+  },
+  methods: {}
+});
+</script>
+
+<style scoped></style>
+
+```
+
+#### 监听属性
+
+- 在options Api里面，我们使用watch选项来侦听data或者props的变化，去执行某一些操作
+- 在composition API里面，我们可以使用watchEffect和watch来完成响应式数据的侦听
+  - watchEffect用于自动收集响应式数据的依赖
+  - watch需要手动指定侦听的数据源
+
+#### **watchEffect介绍**
+
+- watchEffect传入函数会立即被执行一次（类似于duck中的runAndTakeLatest）,在执行的过程中会收集依赖
+- 其次，只有收集的依赖发生变化时，watchEffect传入的函数才会再次执行
+- 返回一个函数，执行后可以停止监听
+
+```vue
+<template>
+  <div>
+    <el-button type="primary" @click="fullName.set('qiu mojian1')"
+      >按钮</el-button
+    >
+    <span>{{ fullName.get() }}</span>
+  </div>
+</template>
+
+<script lang="ts">
+import { computed, defineComponent, reactive, ref, watchEffect } from 'vue';
+import { demoMixin } from '@/mixins/demo';
+
+export default defineComponent({
+  mixins: [demoMixin],
+  components: {},
+  setup() {
+    const firstName = ref('qiu');
+    const lastName = ref('mojian');
+    const fullName = computed(() => ({
+      get: () => {
+        return firstName.value + ' ' + lastName.value;
+      },
+      set: (newName: string): void => {
+        console.log(newName);
+        const names = newName.split(' ');
+        firstName.value = names[0];
+        lastName.value = names[1];
+      }
+    }));
+    const stopWatch = watchEffect(() => {
+      console.log('被监听了', firstName.value, lastName.value);
+    });
+    return { fullName };
+  },
+  methods: {}
+});
+</script>
+
+<style scoped></style>
+
+```
+
+#### **watchEffect清除副作用**
+
+- 比如在开发中我们需要在侦听函数中执行网络请求，但是在网络请求还没有达到的时候，我们停止了侦听器，
+
+  或者侦听器侦听函数被再次执行了
+
+- 那么上一次的网络请求应该被取消掉，这个时候我们就可以清除上一次的副作用;
+
+- 在我们给watchEffect传入的函数被回调时，其实可以获取到一个参数:onInvalidate
+
+  - 当**副作用即将重新执行** 或者 **侦听器被停止** 时会执行该函数传入的回调函数;
+  - 我们可以在传入的回调函数中，执行一些清除工作;
+
+```js
+  watchEffect((onInvalidate) => {
+    const timer = setTimeout(() => {
+      console.log('网络请求');
+    }, 2000);
+    onInvalidate(() => {
+      clearTimeout(timer);
+    });
+  });
+```
+
+#### **watchEffect执行机制**
+
+- 结果是打印两次
+  - 这是因为setup函数在执行时就会立即执行传入的副作用函数，这个时候DOM并没有挂载，所以打印为null;
+  - 而当DOM挂载时，会给title的ref对象赋值新的值，副作用函数会再次执行，打印出来对应的元素
+
+```vue
+<template>
+  <div>
+    <h2 ref="titleRef"></h2>
+    <!-- <el-button type="primary" @click="handleClick">按钮</el-button>
+    <span>{{ fullName.get() }}</span> -->
+  </div>
+</template>
+
+<script lang="ts">
+import { computed, defineComponent, reactive, ref, watchEffect } from 'vue';
+
+export default defineComponent({
+  components: {},
+  setup() {
+    const titleRef = ref(null);
+    watchEffect(() => {
+      console.log(titleRef.value);
+    });
+    return { titleRef };
+  },
+  methods: {}
+});
+</script>
+
+<style scoped></style>
+```
+
+#### **调整watchEffect的执行时机**
+
+- 如果我们希望在第一次的时候就打印出来对应的元素呢?
+  - 这个时候我们需要改变副作用函数的执行时机;
+  - 它的默认值是pre，它会在元素 挂载 或者 更新 之前执行;
+  - 所以我们会先打印出来一个空的，当依赖的title发生改变时，就会再次执行一次，打印出元素
+  - 使用 flush: 'post'即可
+
+```vue
+<template>
+  <div>
+    <h2 ref="titleRef"></h2>
+  </div>
+</template>
+
+<script lang="ts">
+import { computed, defineComponent, reactive, ref, watchEffect } from 'vue';
+
+export default defineComponent({
+  components: {},
+  setup() {
+    const titleRef = ref(null);
+    watchEffect(
+      () => {
+        console.log(titleRef.value);
+      },
+      {
+        flush: 'post'
+      }
+    );
+    return { titleRef };
+  },
+  methods: {}
+});
+</script>
+
+<style scoped></style>
+```
+
+#### **Watch的使用**
+
+- watch的API完全等同于组件watch选项的Property:
+
+  - watch需要侦听特定的数据源，并在回调函数中执行副作用;
+  -  默认情况下它是惰性的，只有当被侦听的源发生变化时才会执行回调;
+
+- 与watchEffect的比较，watch允许我们:
+
+  - 懒执行副作用(第一次不会直接执行);
+  - 更具体的说明当哪些状态发生变化时，触发侦听器的执行;
+  - 访问侦听状态变化前后的值;
+
+- watch侦听函数的数据源有两种类型:
+
+  - 一个getter函数:但是该getter函数必须引用可响应式的对象(比如reactive或者ref)
+  - 直接写入一个可响应式的对象，reactive或者ref(比较常用的是ref);
+
+  -
+
+- 可以监听单个或者多个
+
+```vue
+<template>
+  <div>
+    <h2 ref="titleRef"></h2>
+    <el-button type="primary" @click="handleClick">按钮</el-button>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent, reactive, ref, watch } from 'vue';
+
+export default defineComponent({
+  components: {},
+  setup() {
+    const titleRef = ref(null);
+    const state = reactive({
+      name: 'qmj',
+      age: 18
+    });
+    const names = reactive(['a', 'b', 'c']);
+    watch(
+      () => state,
+      // () => [...names],
+      (newValue, oldValue) => {
+        console.log(newValue, oldValue);
+      },
+      { deep: true, immediate: true }
+    );
+    const handleClick = () => {
+      console.log(111);
+      state.age++;
+    };
+    return { titleRef, state, handleClick };
+  }
+});
+</script>
+```
+
+### 2.3生命周期钩子
+
+- 上面的setup可以替代data，methods，computed，watch等选项，也可以替代声明周期钩子
+- 在setup中怎么用生命周期呢？
+  - 可以直接导入使用onXXX这些函数注册生命周期钩子
+  - 需要注意的是vue3中没有beforeCreate和created，因为setup中就是围绕这两个生命周期运行的
+
+### 2.4**Provide函数**
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -259,10 +555,25 @@ options编写组件的时候逻辑非常分散，我们处理一个逻辑时，�
 ```
 1.特点是对应的属性中编写对应的功能模块
 	1.比如data定义数据，methods定义方法，计算属性，watch监听，生命周期
+2.watch需要侦听特定的数据源
 2.弊端：
 	1.实现某一个功能时，对应的代码逻辑被拆分到各个属性中
 	2.组件变大，复杂时，逻辑关注点的列表就会增长，同一个功能的逻辑会被拆分的很分散
 	3.这样就造成了其组价的可阅读性较差
+```
+
+:::
+
+### 3.watch和watchEffect的区别？应用场景
+
+::: details 点击查看解析
+
+```
+1.默认情况下watch加载的时候不执行，而默认情况下watchEffect是会执行的
+	 watchEffect使用flush: 'post可以初始不执行
+2.watch允许访问侦听状态变化前后的值
+3.watch更具体的说明当哪些状态发生变化时，触发侦听器的执行
+4.watch需要手动传入被监听的值，可以是单个也可以是多个
 ```
 
 :::
