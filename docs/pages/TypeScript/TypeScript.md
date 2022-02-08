@@ -1151,6 +1151,13 @@ declare module 'lodash' {
 }
 ```
 
+### 7.3在vue中使用ref时对组件进行类型声明
+
+```typescript
+const accountRef = ref<InstanceType<typeof LoginAccount>>();
+// LoginAccount为导入的组件
+```
+
 
 
 
