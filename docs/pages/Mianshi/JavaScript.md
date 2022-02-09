@@ -312,6 +312,8 @@ const和let的区别：
 	3.没有自己的this，在你定义函数时就确定了this
 	4.不能使用call，apply改变this
 	5.当只有一个参数一个返回值时，可以省略参数括号，大括号和return
+为什么不能绑定this？
+	MDN官网的话：更简短的函数并且不绑定this
 ```
 
 ### 31.promise实现过程
@@ -900,5 +902,31 @@ O(2^n)
 例子：filter，map，reduce都是高阶函数
 
 应用：高阶组件，返回值为新组建的函数
+```
+
+### 73.类数组
+
+```
+let say = function () {
+ console.log(arguments)
+}
+say(1, 2)
+{
+  0: 1
+  1: 2
+  length: 2
+}
+1.什么是类数组：
+	这个arguments就是一个类数组，有length属性，不能访问数组方法，但是可以通过索引来访问，还可以将其转换成数组
+2.如果一个普通的对象加上一个 length 属性就可以变成一个类数组对象。
+3.转换
+1.
+let say = function () {
+ console.log(Array.from(arguments))
+}
+say(1, 2)
+// [1, 2]
+2.
+Array.prototype.slice.call(arguments)
 ```
 
