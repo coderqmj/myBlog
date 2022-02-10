@@ -428,3 +428,20 @@ RN：很多css3样式不能使用box-shadow
 	
 ```
 
+### 35.React Hooks常见的坑？怎么解决？
+
+```
+1.hook必须放在最上层，也就是返回的后面。
+2.对于有依赖，有缓存的请求hook，在进行修改数据之后，依赖项没有改变，导致不回去请求数据库中最新的数据。（第三方库的useQuery)
+3.优化一方面性能的同时也降低了另外一部分的性能，使用是有代价的，（对比前后Deps依赖，进行了shallowEqual，开销不一定谁大谁小）
+4.闭包引发的问题，会导致保存了旧值，使用const currentState = React.useRef(state)可以解决这个问题，拿到最新的值
+5.修改状态是异步的，不能够立马获取的最新的值（目的是提高性能，批量处理，而不是修改一次就重绘一次）
+```
+
+### 36.类组件和函数组件的区别
+
+```
+1.函数式在一定程度上降低了代码量，useeffect合并了componentDidMount、componentDidUpdate 和 componentWillUnmount。
+2.提供了很多好用的hook，包括了优化性能的hook
+```
+
