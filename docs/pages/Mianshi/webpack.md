@@ -181,3 +181,20 @@ module.exports = {
 ```
 ```
 
+### 18.Tree Shaking如何做到的
+
+```
+概念：用于消除一些无用的代码（dead_code和一些定义但是未使用的代码），其中包括JS的Tree Shaking和css的Tree Shaking。
+
+最佳实现：
+	1.最佳实践就是结合optimization中的usedExports，optimization中的minimizer中的terserOptions的dead_code，再结合package.json的副作用选项sideEffects，去尽可能消除dead_code。
+
+具体步骤：
+	1.webpack优化选项里面开启usedExports为true，这个时候去打包代码就会发现dead_code会被注释打上标记（unused code）。
+	2.然后再优化选项里面开启minimizer，再里面使用terser-webpack-plugin插件，压缩代码dead_code: true，这个时候发现被打上标记的代码被消除了。但是如果有一些导入但未使用的代码，是无法被消除的，比如"import './format.js'"还有一些样式的导入"import './index.css'"。
+	3.这个时候就需要借助package.json里面的消除副作用字段了：
+		1.sideEffects: false，代表所有无效导入都是没有副作用的，可以安心删除，反正都不能删除
+		2.如果是一个数组的话，把文件路径给进去代表这里面的文件是有副作用的，但注意，需要把css的导入都加上去，否则会被消除
+		3.但是我们最优解都是sideEffects: false，然后在loader中去配置css都为sideEffects: true 。
+```
+
