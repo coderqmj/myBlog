@@ -1,4 +1,12 @@
-### 1.webpack的优化/用途
+### 1.webpack的用途
+
+```
+1.最主要是模块化打包。现在的前端根本离不开模块化开发，将不通模块的文件整合起来，保证他们之间的引用正确。这样我们在开发的时候就可以自由的按照视图或者业务功能去划分模块。这样就保证了项目结构是非常清晰的，可阅读性非常强，这样的项目也便于自己维护和向他人交接。
+
+2.编译兼容。早前我们的代码需要手动去兼容各种各样的浏览器，这样大大影响开发效率，有了webpack之后我们就可以通过polyfill去对不支持高级语法的浏览器打补丁，Browserslist设置命中的浏览器，使用PostCSS loader 和 postcss-preset-env插件去对不同的浏览器做适配，让该css被大多数浏览器识别。
+
+3.能力扩展。通过webpack的Plugin，我们可以进一步实现按需加载，压缩代码，Tree Shaking，懒加载等一系列的优化和一些其他的功能。比如分析每一个打包出来文件的大小，这样就可以对其进行分析去优化某一个模块。
+```
 
 ### 2.10个js用到1个，怎么优化打包
 
@@ -196,5 +204,59 @@ module.exports = {
 		1.sideEffects: false，代表所有无效导入都是没有副作用的，可以安心删除，反正都不能删除
 		2.如果是一个数组的话，把文件路径给进去代表这里面的文件是有副作用的，但注意，需要把css的导入都加上去，否则会被消除
 		3.但是我们最优解都是sideEffects: false，然后在loader中去配置css都为sideEffects: true 。
+```
+
+### 19.模块打包运行原理
+
+```
+```
+
+### 20.什么是source-map
+
+```
+1.背景：
+	开发阶段浏览器上跑的代码，是经过各种转换和压缩的，和我们自己编写的代码差异还是较大的，行号列号最终基本对应不上。这样我们代码报错的时候很难去定位问题。我们需要知道编译、打包、压缩后的代码映射回去，于是source-map就诞生了。
+
+2.作用：
+	source-map帮我们快速定位到源代码的位置，提高我们的开发效率。打包生成的js文件都有对应的一个map文件，该js文件最后一行有一个注释//# sourceMappingURL=761.50f6fa.chunk.js.map 指向该map文件。到时候的报错信息会非常准确，会定位到某一个文件的行号和列号。
+	
+3.如何使用：直接在webpack配置的 devtool: "source-map",
+
+4.最佳实践：
+	开发阶段：
+		推荐使用推荐使用 source-map(vue) 或者 cheap-module-source-map(React)， cheap-module-source-map会准确一点，因为ES6语法会经过loader处理，经过处理后再用普通的source-map会造成保存信息不准确。使用cheap-module-source-map就报保证打包文件行号准确。
+	测试阶段：
+		推荐使用 source-map 或者 cheap-module-source-map测试的时候也希望看见具体的报错信息。
+	发布阶段：使用false，或者缺省值（不写）
+		用户层面不希望看见这个，而且源码被看见是很危险的。
+		
+devtool的值（一共24个）：
+	false：直接生成build
+	none：production 模式下的默认值，也是不生成source-map，区别就是none在development会报错
+	eval：development 模式下的默认值，不生成source-map，还原一个大概值，速度会快一点，但是不准确
+	source-map：生成独立的source-map
+	cheap-source-map：更加高效，没有列的信息，一般我们只要知道行号就行了
+	Cheap-moudle-source-map：保持低开销的同时更加准确
+```
+
+### 21.webpack启动流程
+
+```
+1.执行webpack相关命令后，就相当于执行node_modules里面bin/webpack
+2.会生成一个cli对象会，然后判断当前是否安装cli，然后执行runCli方法，该方法是require(wepackclipath)的，会执行该路径的代码
+3.cli里面主要的操作就是合并配置文件，package.json的webpack配置和webpack.config.js的配置做一个合并：
+	1.先去执行makeCommand函数，在里面执行一个叫makeOptions的函数去合并webpack配置
+	2.执行完makeOptions之后又去执行buildCommand函数：
+		1.里面去执行了createCompiler，调用了this.webpack(config.options)生成一个compiler
+		2.这个compiler是将webpack.config.js和package.json的webpack配置合并好的
+		3.然后调用compiler.run()即可启动webpack
+		
+注意：
+	vue和react是没有依赖webpack-cli的，因为webpack-cli要做的事情就是合并webpack.config.js和package.json的配置，我们也可以通过自己去合并生成这个config，然后调用 
+	const config = require("./config/webpack.config")({
+  	production: true
+	});
+	const compiler = webpack(config);
+	compiler.run()就可以了
 ```
 
