@@ -260,3 +260,15 @@ devtool的值（一共24个）：
 	compiler.run()就可以了
 ```
 
+### 22.Loader的执行顺序
+
+```
+1.一个loader其实会导出两种东西，一个是normalLoader===module.exports = {}, 另外一个是pitchLoader === module.exports.pitch = {}。
+2.单纯的说loader从右向左执行并不是十分准确的，因为这个pitching Loader是从左往右执行的，并且是等一个use里面的所有pitching Loader都执行完了才会去执行normalLoader
+https://webpack.docschina.org/api/loaders/#pitching-loader
+
+为什么是normalLoader是从左往右的：
+	1.执行normalLoader之前会把所有的pitchLoader去执行一遍，每执行一次就loaderContext.loaderIndex++，知道index=lenth
+	2.执行完pitchLoader才会去执行normalLoader，这个时候loaderContext.loaderIndex是数组的最后一位，然后每执行一次做--，这样的话就是从右边网左边了
+```
+
