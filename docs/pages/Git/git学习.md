@@ -1,3 +1,17 @@
+## 一、Git基本配置
+
+### 1.1global、local、system登录
+
+```bash
+# 设置全局/当前仓库用户
+git config --local/global user.name 'coderqmj'
+git config --local/global user.email '1732935973@qq.com'
+# 查看当前配置
+git config --local/global --list  
+```
+
+
+
 ### 1.版本回退/前进
 
 #### 方法一：
