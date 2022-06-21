@@ -1,3 +1,19 @@
+```bash
+# 修改最近一次commit的message
+git commit --amend
+
+# 多个commit合并成一个
+git rebase -i 基于哪一个的hash
+然后用s替换pick
+
+# 取消最近几次的commit(慎用，不可恢复)
+git reset --hard 回退的hash
+```
+
+
+
+
+
 ### 1.版本回退/前进
 
 #### 方法一：
