@@ -450,3 +450,230 @@ class Student extends Person {
 - 包括静态方法 
 - 也可以通过super.xxx复用父类的逻辑
 
+## 五、Promise
+
+### 1.promise的起源
+
+- 之前写异步代码的时候，要么就是自己去封装request函数，要自己去设计回调函数、回调函数名称、回调函数的使用
+
+- 要么就是使用第三方，按照别人的规范去写，设计也是不同的，必须看源码或者文档
+
+- 更好的方案就是promise，给调用者一个承诺，规范了所有编写代码的逻辑
+
+  - 给出回调数据时，就可以创建一个Promise对象
+  - 通过new创建Promise对象时，我们需要传入一个回调函数，称之为executor
+    - 这个回调函数立即执行，并且给传入另外两个回调函数resolve和reject
+    - 调用resolve时，会执行Promise对象的then方法传入的回调函数
+    - 调reject回调函数时，会执行Promisecatch方法传入的回调函数
+
+  **什么是promise**
+
+  - 就是一种机制，让你规范的编写异步代码
+  - 写起来到处都是回调，规定了成功、失败会执行哪些回调，这就是一种规范
+
+  
+
+  
+
+  ### 2.promise基本使用
+
+  ```js
+  // 下面new Promise(fn)fn就是executor，会立即执行
+  const primise = new Promise(() => {
+    console.log("这里会被立即执行");
+  });
+  // executor也有两个参数resolve成功回调，reject失败回调
+  const primise = new Promise((resolve, reject) => {
+    console.log("这里会被立即执行");
+  });
+  ```
+
+  **例子**
+
+  ```js
+  function getData() {
+    return new Promise((resolve, reject) => {
+      // 这里面写请求的代码
+      if ("成功") {
+        resolve("success");
+      } else {
+        reject();
+      }
+    });
+  }
+  const promise = getData();
+  promise.then((res) => {
+    console.log("成功了", res);
+  });
+  ```
+
+  
+
+## 六、生成器和迭代器
+
+### 1.什么是迭代器？
+
+::: tip 迭代器
+
+迭代器本身是一个对象，它可以帮助我们对某个数据接口进行遍历。在JS中，迭代器也是一个具体的对象，其必须要符合迭代器协议：1.迭代器协议定义产生一些列值的方式；2.在JS中这个标准就是一个特定的next方法；
+
+:::
+
+## 七、模块化
+
+::: tip 什么是模块化
+
+1.模块化开发最终目的是将程序划分成一个个的小结构（表现就是一个个文件）
+
+2.这个结构中编写属于自己的逻辑代码，有自己的作用域，不会影响到其他结构
+
+3.这个结构可以将自己希望暴露的变量、函数、对象等导出给其它结构使用
+
+4.也可以通过某种方式，导入另外结构中的变量、函数、对象等
+
+:::
+
+### 1.没有模块化带来的问题
+
+- 多个JS之间没有自己的作用域，造成命名冲突（早期通过自执行函数来解决）
+
+### 2.CommonJS规范和Node关系
+
+- CommonJS是一个规范，而Node实现了这个规范
+
+#### **CommonJS使用**
+
+- 使用方式很简单：
+
+```js
+// index.js
+const name = "qmj";
+const foo = (name) => {
+  console.log("my name is", name);
+};
+
+module.exports = {
+  name,
+  foo,
+};
+
+// qmj.js
+const { name, foo } = require("./index");
+
+console.log(foo(name));
+```
+
+#### **CommonJS原理**
+
+- 需要明确的是：
+  - index.js文件通过module.exports关键字导出了一个对象（module.exports=originObject）
+  - 然后qmj.js文件通过require函数（参数为路径）得到了一个对象（const object = require(path)）
+- 那么其实可以推理：
+  - 通过require函数，传入唯一的路劲可以把对应的module.exports返回
+  - 那么就可以得到 object = module.exports = originObject
+  - 这3个东西其实都是一个东西
+- 验证：
+  - 在qmj.js中改变info的信息，然后通过定时器延迟在index.js获取info的内容，发现被改变了
+
+#### **exports**
+
+- 使用：
+  - 发现还有另外一种导入方式，会感觉很奇怪
+
+```js
+// index.js
+const name = "qmj";
+const age = 18;
+
+exports.name = name;
+exports.age = age;
+
+// qmj.js
+const { name, age } = require("./index");
+
+console.log(name, age);
+```
+
+- 关于这一块的源码
+  - 所以exports和module.exports和{}都是等价的
+  - exports就相当于拿到这个对象往里面塞属性
+  - 所以最终导出的依然是module.exports
+
+```js
+module.exports = {};
+exports = module.exports;
+```
+
+- 需要注意的点
+  - exports = { name, age }这样导出一定是不行的
+  - 因为我们最终导出的一定是module.exports
+  - exports直接等于一个对象就相当于重新给exports赋值了，并不会影响到module.exports
+
+#### **exports存在的意义（了解）**
+
+- 因为exports导出才真正符合CommonJS规范
+- 只是在node中另外实现了module.exports
+- 大家习惯于后者，慢慢抛弃了exports
+
+#### require(x)查找规则
+
+- 情况一：X是一个核心模块（path、http之类的）
+  - 直接返回核心模块，并停止查找
+- 情况二：x是路径
+  - 文件x => x.js => x.json => x.node
+- 情况三：x不是路径也不是核心模块
+  - 回去当前文件夹下的node_modules => 上层....直到根目录的node_modules
+
+#### **模块的加载过程**
+
+- 结论一：模块在第一次被引入时，模块的js代码会被执行一次
+- 结论二：模块被多次引入时，会缓存，最终只加载（运行）一次
+  - 因为每个模块对象都有一个属性：loaded
+  - 只要被加载过了，就会把它设置未true
+- 结论三：循环引用
+  - 这样就行程了一个图结构（图的遍历就有DFS和BFS）
+  - node就是使用深度优先
+
+#### CommonJS缺点
+
+- 缺点一：加载模块是同步的
+  - 同步意味着只有等到对应的模块加载完毕，当前模块中的内容才能被运行
+  - 这个在服务器（node中，服务端）没什么问题，因为服务器加载的js文件都是本地的，速度很快
+  - 但是在前端就会涉及到引入服务端的js，那样就非常不友好
+
+### 3.ESModule（重点）
+
+- 和CommonJS不同点
+  - 使用import和export
+  - 采用编译期的静态分析，并且也加入了动态引入的方式
+
+#### ESModule基本使用
+
+- 如果是直接导入的话不能直接支持，需要在script标签加上type属性，值为module
+- 导入的文件名还需要加上后缀名
+
+### 4.ESModule原理
+
+#### 主要流程
+
+- 阶段一：构建，找到下载地址（这也就是为什么html需要启动服务才可以下载，本地就不行file:///下载不了），下载下来，将其解析成模块记录（Module Record）
+  - 模块记录：一个js文件对应一个Module Record
+- 阶段二：实例化，对模块进行实例化，并且分配内存空间，解析模块的导入和导出语句，把模块指向对应的内存地址
+- 阶段三：运行，运行代码，计算值，并且将值填充到内存地址中
+  - 为什么还需要运算呢，是因为阶段二之后，会导出属性，但是对应的属性都为undefined
+  - 实例化的时候，内部代码只执行关键字的部分，比如只执行import和export，其他如const name = 'qmj'不会执行
+  - 阶段三就是将数据具体对应的值计算出来并赋值给他
+
+#### 构建
+
+ ![](./images/esmodule_01.png)
+
+- 首先读取到type=“module”，就会开始下载这个main.js
+- 然后对其进行静态分析，静态分析只会执行import之类的语句，其他不执行
+- 静态分析之后会生成Module Record的数据结构，里面会有RequestModules字段，代表有哪些js还需要下载，上图就是还需要下载counter.js和display.js
+- 然后将这两个js都下载下来
+
+**问题**
+
+- 多个文件导入同一个js会多次下载吗？
+  - 不会，每次下载之后会有一个Module Map的数据结构，url和Record对应起来了
