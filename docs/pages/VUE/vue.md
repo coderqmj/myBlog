@@ -168,9 +168,9 @@ options编写组件的时候逻辑非常分散，我们处理一个逻辑时，�
 - 因为setup的调用发生在data、computed或者methods被解析之前，这些东西无法在setup中获取
 - 调用顺序
   1. 调用 createComponentInstance 创建组件实例
-  2. 调用 setupComponent 初始化component内 部的操作
-  3. 调用 setupStatefulComponent 初始化有状态 的组件
-  4. 在 setupStatefulComponent 取出了 setup 函 数
+  2. 调用 setupComponent 初始化component内部的操作
+  3. 调用 setupStatefulComponent 初始化有状态的组件
+  4. 在 setupStatefulComponent 取出了setup函数
   5. 通过callWithErrorHandling 的函数执行 setup
 
 #### Reactive API

@@ -109,6 +109,7 @@ const handleClick = () => {
 
 - state是store的核心部分，因为store使用来帮助我们管理状态的
 - 在pinia中，状态被定义为返回初始状态的函数
+- 不具有响应式
 - 读取和写入state：
   - 默认情况，通过store实例访问状态来直接读取和写入状态
 - 重置state：
@@ -185,5 +186,148 @@ userStore.$state = {name: '替换名字', age: 188}
 **订阅state变化**
 
 ```js
+```
+
+## 五、认识getters
+
+**什么是getters**
+
+- 相当于store的计算属性，saga-duck对应的是rawSelectors
+- 可以用defineStore() 中的getters属性定义
+- getters中可以定义接受一个state作为参数的函数 
+- 具有缓存属性，多次调用也只会调用一次
+
+**使用**
+
+```js
+// 定义
+const useCounter = defineStore("counter", {
+  state: () => ({
+    count: 99
+  }),
+  actions: {
+    increment() {
+      this.count++
+    }
+  },
+  getters: {
+    doubleCount: (state) => state.count * 2
+  }
+})
+
+// 使用 直接在store里面取用
+const counterStore = useCounter()
+console.log(counterStore.doubleCount)
+```
+
+**使用：一个getter引入另外一个getter**
+
+- 通过this获取getter,
+- 场景
+
+```js
+const useCounter = defineStore("counter", {
+  state: () => ({
+    count: 99
+  }),
+  actions: {
+    increment() {
+      this.count++
+    }
+  },
+  getters: {
+    doubleCount: (state) => state.count * 2,
+    doubleCountPlusOne() {
+      return this.doubleCount + 1
+    }
+  }
+})
+
+// rawSelectors也可以计算
+get rawSelectors() {
+  // type State = this['State'];
+  return {
+    ...super.rawSelectors,
+    type: (state) => state.type,
+    type1(state) {
+      return `${this.type(state)}1111`;
+    },
+  };
+}
+```
+
+**返回一个函数**
+
+```js
+getters: {
+  // 3.getters支持返回一个函数
+  getInstanceById(state) {
+    return function(id) {
+      return state.instances.find(instance => instance.id === id);
+    }
+  },
+}
+```
+
+**使用其他store的数据**
+
+```js
+getters: {
+  // 4.getters用到别的store中的数据
+  showMessage(state) {
+    // 1.获取用户信息
+    const userStore = useUser();
+    return `${userStore.name}拥有${state.instances.length}个实例`
+  }
+}
+
+```
+
+## 六、Actions
+
+- Actions相当于组件中的methods
+- 可以使用defineStore()中的actions属性定义，并且他们非常适合处理业务逻辑
+
+## 七、问题收集
+
+### **1.getters获取其它store的数据，未加载可以获取到吗？**
+
+```
+1.和在哪个组件使用是没有关系的，在哪个组件使用store，哪个组件就可以加载使用里面的属性和方法。
+```
+
+### 2.为什么解构的响应式无效
+
+```
+// const { name, age } = info;
+1.使用的响应式原理
+2.解构的时候，它是区分原始类型和引用类型的赋值
+	a)：原始类型的赋值相当于按值传递， 引用类型的值就相当于按引用传递
+3.访问其中的内容时，不会丢失响应式，比如obj.name，因为obj是个对象，会重新包装为响应式
+4.主要原因: 结构的时候，就是相当于把一个字符串或者number赋值给name，age，展示的时候就是展示它的值，这些值就不是响应式的。
+
+解决：使用toRefs，const { name, age } = 使用toRefs(info);
+	a):到时候结构出来的name和age是对应ref，通过name.value可以获取到值，但是内部会做一个解包，所以直接name就可以获取到value
+```
+
+### 3.storeRefs原理
+
+- 内部帮我们做toRef处理，把我们结构出来的每个属性name，age这些都转为ref
+
+```
+  if (isVue2) {
+    return toRefs(store);
+  } else {
+    store = toRaw(store);
+    const refs = {};
+    for (const key in store) {
+      const value = store[key];
+      if (isRef(value) || isReactive(value)) {
+        refs[key] = toRef(store, key);
+      }
+    }
+    return refs;
+  }
+}
 ```
 
