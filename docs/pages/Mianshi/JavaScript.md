@@ -791,9 +791,18 @@ const quickSort = (array) => {
 ### 61.判断对象是否为空
 
 ```js
-function checkNullObj(obj) {
+1.function checkNullObj(obj) {
   return Object.keys(obj).length === 0;
 }
+2.将json对象转化为json字符串，再判断该字符串是否为"{}"
+3.for in 循环判断
+var b = function(obj) {
+    for(var key in obj) {
+        return false;
+    }
+    return true;
+}
+4.var arr = Object.getOwnPropertyNames(data);
 ```
 
 ### 62.encodeURI和encodeURIComponent区别
@@ -949,5 +958,32 @@ Array.prototype.slice.call(arguments)
 ```
 1.关键字不同
 2.使用ESModule代码将自动采用严格模式
+```
+
+### 76.随机颜色，互相转换
+
+```
+// const RandomColor = () => "#" + Math.floor(Math.random() * 0xffffff).toString(16).padEnd(6, "0");
+function randomColor() {
+  return "#"+ 
+  Math.floor(Math.random() * 0xffffff)
+  .toString(16);
+}
+// 哈希转rgb
+function hexToRgb(hex) {
+  return "rgb(" + 
+  parseInt("0x" + hex.slice(1, 3)) + 
+  "," + parseInt("0x" + hex.slice(3, 5)) + 
+  "," + parseInt("0x" + hex.slice(5, 7)) + ")";
+}
+
+// 哈希转rgba
+function hexToRgba(hex, opacity) {
+  return "rgba(" + parseInt("0x" + hex.slice(1, 3)) + "," + parseInt("0x" + hex.slice(3, 5)) + "," + parseInt("0x" + hex.slice(5, 7)) + "," + opacity + ")";
+}
+
+
+console.log(hexToRgb('#ffffff'))
+console.log(parseInt('0xff'))
 ```
 

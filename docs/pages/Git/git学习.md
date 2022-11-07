@@ -20,12 +20,6 @@ git config --local/global user.email '1732935973@qq.com'
 git config --local/global --list
 ````
 
-<<<<<<< HEAD
-
-=======
-
-> > > > > > > b610db5ec86d23c6091e91c1e1e58cfe073563f6
-
 ### 1.版本回退/前进
 
 #### 方法一：
@@ -100,3 +94,53 @@ git push origin --delete [branchname]
 9.合并分支test，标题按照规范，描述需要尽量详细。
 10.测试环境没问题合并预发环境，预发环境没问题合并到master。
 ```
+
+### 3.Tag的使用
+
+- 某一个重要的功能开发OK了，对某个版本做一个备份，会打上一个标签
+- 不要在tag里去修改东西，应该是基于某个tag创建分支，再开发
+
+```bash
+git tag v1.0.0  # 某个版本打tag
+
+git tag -a v1.0.1 -m 'feat: 搜索功能' # 具有标注的tag
+
+git show tag v1.0.1 # 查看tag信息
+
+git push origin v1.0.0  # tag推送到远程
+
+git push origin --tags # 所有tag推到远程
+
+git tag -d v1.1.0 # 删除tag
+
+git push -delete <tagname> # 删除远程tag
+
+git checkout <tagname> 进入到某个tag
+```
+
+### 4.git提交对象（原理）（待重新学习）
+
+- git add之后发生了什么？
+  - 会把文件暂时存到 `.git/objects/00/80ce946fa481f28033832995db96414b5d6114`下面
+  - 里面都是二进制，可以用 `git cat-file -p 0080c` 查看文件
+- git commit发生了什么？
+  - 
+
+### 5.git rebase
+
+- 之前的git merge，在两个开发分支上去开发功能再合到master上，merge之后最新提交就有两个父节点了，就不是树结构
+
+![](./images/git_merge_noline.png)
+
+ 
+
+- 开发分支开发完之后，就在开发分支上`git rebase master`:
+  - 这样当前分支的的父节点就指向master指向了
+  - 然后再把当前分支合并到master上就行了
+- 使用场景：
+  - 你的分支是从最新的master上切出来的，但是又有其他同事也在开发，然后比你早提交了
+  - 这个时候最好rebase一下，直接merge的话，就不是线性结构了
+- 总结：
+  - merge用于记录git的所有历史，那么分支的历史错综复杂，也全部记录下来
+  - rebase用于简化历史记录，将两个分支的历史简化，整个历史更加简洁
+  - 永远不在在主分支上使用rebase，会造成大量的提交历史在master分支中不同
