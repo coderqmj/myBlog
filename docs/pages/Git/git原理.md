@@ -1,48 +1,47 @@
 ### 一、Git add 的原理
 
-- 首先查看该仓库的.git文件夹（mac使用 `shift+option+.`）
-  - 所有文件存储其实都是在object里面的
-  - ojbect下面有两个文件夹：*info*和*pack*文件夹，默认什么都不操作的情况下，这两个都是空文件夹
+- 首先查看该仓库的.git文件夹（mac使用 `shift+command+.`）
+  - 所有文件存储其实都是在objects里面的
+  - Ojbects下面有两个文件夹：*info*和*pack*文件夹，默认什么都不操作的情况下，这两个都是空文件夹，因为这个git仓库还没有帮我们存过东西
 
 ![./images/dot_git_item.png](./images/dot_git_item.png)
 
-- 现在执行`git add .`，这样就将文件加入到暂存区里面了
+- 现在执行`git add .`，这样就将文件加入到暂缓区里面了
   - 就会发现objects下面多了两个文件夹71和dd
-  - 71和dd文件夹下面又有一个文件，二进制的 
-  - 可以使用 `git cat-file -p [文件目录+文件名]` 查看文件内容
+  - 71和dd文件夹下面又有一个文件，二进制的   
+  - 可以使用 `git cat-file -p [目录名+ 文件名]` 查看文件内容
     - git cat-file -p 71b74
-  - git add 总结，就是被暂时以二进制的方式存起来了，并没有关联对象
-
-![](./images/git_add_dir.png)
 
 ![](./images/git_add_file.png)
 
 ![](./images/git_cat_file_p.png)
 
-### 二、git commit
+**注意：git add 之后，文件是被暂时以二进制的方式存起来了，并没有和某一个提交对象关联**
+
+### 二、git commit 
 
 - 执行`git commit -m 'feat: 提交文件'`
 
-  - 多出对应的文件：
+  - 多出对应的两个目录分别是：81和a9
 
   ![](./images/git_commit_dir.png)
 
-  - 查看下对应的文件，执行`git cat-file -p 8a8ae4`
+  - 首先看下8a里面的文件，执行`git cat-file -p 8a8ae4`，输出如下图所示
     - blob：代表这是一个二进制文件
-    - 71b74：很熟悉，就是我们之前`git add .`生成的文件
-    - aa.js：就是文件在原来项目里面提交的文件
+    - 71b74：很熟悉，就是我们之前`git add .`生成的目录名+文件名
+    - aa.js：就是在原来项目里面提交的文件
 
   ![](images/git_commit_cat_file_01.png)
 
-  - 还有一个文件：a9目录下面的94f
-    - 每一次的commit的object就是这个文件夹了，每一次提交了哪些文件和信息都在里面
-    - 注意看：第一行的提交树，不就是上面的那个8a8ea4吗？里面有我们这里次提交的文件，已经源文件的索引
+  - 在查看下另外一个文件：a9目录下面的94f
+    - 每一次的commit的对象就是这个文件夹了，每一次提交了哪些文件和信息都在里面
+    - 注意看：第一行的提交树，不就是上面的那个8a8ea4吗？里面有我们这里次提交的文件，以及源文件的索引
     - 下面就是提交人和提交message
 
   ![](./images/git_commit_info_01.png)
 
   - 每一个commit都对应一个sha1校验和
-    - 这个commitId不就是我们对应的a994那个commit信息的文件吗
+    - git log 输出commitId就是我们对应的a994那个commit信息的**目录名+文件名**
 
   ![](./images/git_log_sha1.png)
 
@@ -50,6 +49,8 @@
   - 里面有指向暂存内容快照的指针
   - 还有姓名，邮箱，message，以及父对象的指针
   - 而由多个分支合并产生的提交对象有多个父对象
+  - 首次提交没有父对象，之后的提交对象都会有一个父对象
+  - 所以只有commit的时候，才能知道这次commit是谁操作的，操作那些信息等等
 
 
 
