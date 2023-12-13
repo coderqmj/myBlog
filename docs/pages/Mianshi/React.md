@@ -445,3 +445,23 @@ RN：很多css3样式不能使用box-shadow
 2.提供了很多好用的hook，包括了优化性能的hook
 ```
 
+### 37.组件里为什么要导入import React from 'react';
+
+```
+1.因为React组件会在JS文件里面写JSX，JSX的本质又是React.createElement，最终会被编译成React.createElement，如果不导入的话，找不到React会报错
+```
+
+### 38.React17为什么不用引入React
+
+```
+1.React 更新引入了 react/jsx-runtime, 改变了 JSX 编译模式, 不再是 React.createElement
+2.同时编译工具(react 的预设 @babel/preset-react), 针对 jsx 不但会帮我们进行编译, 还会帮我们手动引入所需要的包
+// 由编译器引入（禁止自己引入！）
+import { jsx as _jsx } from 'react/jsx-runtime';
+
+function App() {
+  return _jsx('h1', { children: 'Hello world' });
+}
+
+```
+
