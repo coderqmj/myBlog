@@ -49,7 +49,7 @@
 
 ### 五、非扁平化管理方式
 
-- 当使用npm或者yarn的时候，所有软件包都将被提升到node_modules的跟目录下
+- 当使用npm或者yarn的时候，所有软件包都将被提升到node_modules的根目录下
   - 导致的问题是：源码可以访问本不属于当前项目所设定的依赖包，package里面没有，但是访问到了
 - pnpm会创建一个非扁平的node_modules
   - pnpm会将项目的依赖放在node_mudules根目录下，然后软链接到.pnpm文件下
