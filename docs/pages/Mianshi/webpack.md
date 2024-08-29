@@ -275,3 +275,14 @@ https://webpack.docschina.org/api/loaders/#pitching-loader
 	2.执行完pitchLoader才会去执行normalLoader，这个时候loaderContext.loaderIndex是数组的最后一位，然后每执行一次做--，这样的话就是从右边网左边了
 ```
 
+### 23.loader和plugin区别
+
+```
+```
+
+### 24.自定义plugin
+
+```
+DomainReplacePlugin
+```
+
