@@ -547,3 +547,13 @@ flex: 两个纯数字 2 2；    =>  flex-grow | flex-shrink
 flex: 三个值 2 2 10%;    =>  flex-grow | flex-shrink | flex-basis
 ```
 
+### 34.为什么 CSS 要放在头部
+
+```
+1.外链css无论放在html的任何位置都不会影响html的解析，但是会影响html的渲染；
+2.如果将css放在尾部，html的解析不受影响，浏览器会在 css 样式加载解析完后，重新计算样式绘制，造成回流重绘、页面闪动等现象；
+3.而如果将css放在头部，css的下载解析时可以和html的解析并行，并且会等待css下载解析完毕后开始绘制；
+
+
+```
+

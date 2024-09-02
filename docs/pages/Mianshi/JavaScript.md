@@ -446,17 +446,107 @@ commonjs:
 
 
 
-### 36.防抖节流的区别
+### 36.防抖节流的区别？实现？
 
-```
+```js
 防抖：
-	原理：在事件被触发n秒后再执行回调，如果在这n秒内又被触发，则重新计时
+	原理：在事件被触发完n秒后再执行回调，如果在这n秒内又被触发，则重新计时
 	提交表单，搜索，窗口resize，等使用防抖
 
 节流：
 	使函数有节制的执行，而不是全部进行执行，一般都是在多少秒内执行一次。与防抖最主要的区别在于，这个时间点内，不断的执行这个函数，它也不会重新计时，而是等待给定的时间过去，再执行，才会被执行。
 	scroll事件，mousemove事件需要持续执行的
+	
+防抖实现:
+function debounce(fn, delay, immediate = false) {
+  // 1.定义一个定时器, 保存上一次的定时器
+  let timer = null
+  let isInvoke = false
+
+  // 2.真正执行的函数
+  const _debounce = function(...args) {
+    // 取消上一次的定时器
+    if (timer) clearTimeout(timer)
+
+    // 判断是否需要立即执行
+    if (immediate && !isInvoke) {
+      fn.apply(this, args)
+      isInvoke = true
+    } else {
+      // 延迟执行
+      timer = setTimeout(() => {
+        // 外部传入的真正要执行的函数
+        fn.apply(this, args)
+        isInvoke = false
+        timer = null
+      }, delay)
+    }
+  }
+
+  // 封装取消功能
+  _debounce.cancel = function() {
+    if (timer) clearTimeout(timer)
+    timer = null
+    isInvoke = false
+  }
+
+  return _debounce
+}
+
+
 ```
+
+### 节流实现
+
+```js
+function throttle(fn, interval, options = { leading: true, trailing: false }) {
+  // 1.记录上一次的开始时间
+  const { leading, trailing } = options
+  let lastTime = 0
+  let timer = null
+
+  // 2.事件触发时, 真正执行的函数
+  const _throttle = function(...args) {
+
+    // 2.1.获取当前事件触发时的时间
+    const nowTime = new Date().getTime()
+    if (!lastTime && !leading) lastTime = nowTime
+
+    // 2.2.使用当前触发的时间和之前的时间间隔以及上一次开始的时间, 计算出还剩余多长事件需要去触发函数
+    const remainTime = interval - (nowTime - lastTime)
+    if (remainTime <= 0) {
+      if (timer) {
+        clearTimeout(timer)
+        timer = null
+      }
+
+      // 2.3.真正触发函数
+      fn.apply(this, args)
+      // 2.4.保留上次触发的时间
+      lastTime = nowTime
+      return
+    }
+
+    if (trailing && !timer) {
+      timer = setTimeout(() => {
+        timer = null
+        lastTime = !leading ? 0: new Date().getTime()
+        fn.apply(this, args)
+      }, remainTime)
+    }
+  }
+
+  _throttle.cancel = function() {
+    if(timer) clearTimeout(timer)
+    timer = null
+    lastTime = 0
+  }
+
+  return _throttle
+}
+```
+
+
 
 ### 37.Ajax的readystate
 
@@ -1061,5 +1151,72 @@ weakMap
 // 除法
 0.3 / 0.1 = 2.9999999999999996
 0.69 / 10 = 0.06899999999999999
+```
+
+### 79.Map/Set/WeakMap/WeakSet
+
+```b
+map:
+	1.概念是映射
+	2.普通对象只能用字符串作为key，不是字符串也会被转为字符串，而map可以用任何数据类型作为key
+	3.map.set(key, value)添加修改值，map.get(key)获取，has判断是否存在
+set: 
+	1.概念是集合
+	2.Set成员的值都是唯一的，不允许重复
+	3.add添加，has查询是否存在，delete删除，不能通过索引访问
+	4.使用set.keys()，set.values()遍历，同时也可以foreach
+	
+weakMap：
+	1.原来的是强引用，weakMap是弱引用，当断开连接的时候可以被垃圾回收机制回收
+  let person = { name: "张三" };
+  const person1 = [person]; 
+  person = null; 
+  console.log(person1); 
+  2.这里的person1强引用了person，所以person1不会被回收，person = null; 是无效的
+  let person1 = new WeakMap();
+  let person = { name: "张三" };
+  person1.set(person, "张三"); 
+  person = null; 
+  // 等待垃圾回收后 
+  console.log('person1',person1); 
+  这里的WeakMap是弱引用，person就被回收了
+  4.不支持迭代，没有size，foreach，values，keys这些方法
+WeakSet：
+	1.WeakSet的成员只能是Symbol值和对象，Set则是任意
+	2.WeakSet是弱引用；Set是强引用。
+	3.不支持迭代，没有size，foreach，values，keys这些方法
+	4.weakSet可以实现自动清理回收
+
+
+```
+
+### 80JS为什么放尾部
+
+```
+为什么 Script 要放在尾部
+
+因为当浏览器解析到 script 时，就会立即下载执行，中断 html 的解析过程，因为 js 可能会修改 dom 元素；如果外部脚本加载时间长，就会造成网页长时间未响应；
+
+async 和 defer 的解析过程
+
+浏览器解析到带 async 属性的 script 标签时，不会中断 html 解析，而是并行下载脚本；当脚本下载完成后，中断解析并执行脚本；
+浏览器解析到带 defer 属性的 script 标签时，不会中断 html 解析，而是并行下载脚本；当浏览器解析完HTML时、DOMContentLoaded 事件即将被触发时，此时再执行下载完成的脚本；
+
+async 和 defer 的区别
+
+async 和 defer 都仅对外部脚本有效
+async 标志的脚本文件一旦加载完成就立即执行；而 defer 标志的脚本文件会在 HTML解析完成且DOM构建完毕后再执行；（也就是说defer是延迟执行，async是异步执行）
+如果有多个js脚本，async标记的脚本哪个先下载结束，就先执行那个脚本。而defer标记则会按照js脚本书写顺序执行。
+如果同时使用async和defer属性，defer不起作用，浏览器行为由async属性决定。
+DOMContentLoaded 事件会等待 defer 的脚本执行完后才触发；
+
+```
+
+### 81 哪些脚本适用async加载，哪些脚本适用defer加载
+
+```
+Async：适用于那些独立的脚本，它们不依赖于其他脚本，也不被其他脚本依赖。当浏览器遇到一个async脚本时，它不会停下来等待它下载和执行，而是会继续加载HTML。一旦脚本下载完成，浏览器就会停下来执行它。这意味着，如果有多个async脚本，它们可能不会按照在HTML中的顺序执行。
+
+Defer：适用于那些依赖于DOM的脚本，或者是其他脚本依赖的脚本。当浏览器遇到一个defer脚本时，它会等到整个HTML都解析完成后才会执行这个脚本。如果有多个defer脚本，它们会按照在HTML中的顺序执行。
 ```
 

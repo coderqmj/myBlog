@@ -442,7 +442,9 @@ RN：很多css3样式不能使用box-shadow
 
 ```
 1.函数式在一定程度上降低了代码量，useeffect合并了componentDidMount、componentDidUpdate 和 componentWillUnmount。
-2.提供了很多好用的hook，包括了优化性能的hook
+2.提供了很多好用的hook，包括了优化性能的hook（useMomo,useCallback）
+3.写法简洁，更容易阅读和上手
+4.和官网搭配的RTK结合起来，react+redux+hooks项目可以用更少的代码完成更多的事情
 ```
 
 ### 37.组件里为什么要导入import React from 'react';
@@ -465,11 +467,16 @@ function App() {
 
 ```
 
-### 39.hook为什么放在最上面
+### 39.hook为什么放在最上面？为什么要用链接结构
 
 ```
 1.我们每个每个hook的顺序，将每个state放入数组中，每个元素都会被标记cursor，重新渲染时，cursor变为0重新渲染；
 2.如果有if语句之类的，就会导致cursor对应不上
+
+链表结构：
+	1.链表可以高效的插入和删除，在组件生命周期中，可能会频繁加入和移除hook
+	2.链表的数据结构更简单，容易理解和实现，容易维护
+	3.保证了执行顺序：可以确保执行顺序和添加顺序一致，因为使用index记录，不然会导致错乱和预期之外的逻辑
 ```
 
 ### 40.React为什么有合成事件
@@ -480,5 +487,29 @@ function App() {
 	1.提高性能：通过在文档根节点上添加事件监听，而不是每个子元素单独添加监听器，节省了内存和事件处理时间
 	2.跨浏览器兼容性：React合成事件抹平了不同浏览器之前的差异，提供了统一事件处理的API
 	3.自动管理事件池：React使用事件回收池和重用合成事件对象，减少垃圾回收的压力
+```
+
+### 41.JSX到渲染屏幕的过程
+
+```
+fiber+源码
+1.首先JSX的写法就是一个语法糖，本质上就是一个React.createElement(tag, props, children)
+2.然后通过createElement会创建出来一个JavaScript对象树，这个树就是虚拟DOM树，有tag信息，props，还可能有多个children子节点
+3.以root节点为例，有了虚拟DOM之后，会调用render方法，将我们element与container关联起来，生成work in process Root和nextUnitOfWork，这两个数据结构就是fiber
+4.然后requestIdleCallback空闲的时候，一直循环调用workloop，看当前是否有fiber需要处理
+5.然后拿着这个根fiber一直深度优先遍历它的子fiber，兄弟fiber，去调和每一个fiber。调和就是给每个fiber都标记上，到底是插入还是更新，还是删除节点。
+6.所有需要调和的fiber完成后，就需要进行commit提交fiber，commit就是判断fiber的tag到底是更新/删除/添加，然后去操作真实DOM
+7.上面完成后真实DOM就渲染出来了。
+
+关键：
+	1.通过requestIdleCallback不断扫描当前的空余时间里是否有fiber需要调和
+```
+
+### 42.React为什么需要虚拟DOM
+
+```
+1.性能优化：虚拟DOM是用JS对真实DOM的抽象描述，当组件发生变化的时候，这个时候JS创建一个新的虚拟DOM去和就的虚拟DOM对比更新就行（调和），可以避免频繁操作真实DOM带来的性能开销
+2.隔离真实DOM，Ract将更新UI的逻辑（过程）与真是DOM分割
+2.易于测试，JS对象可以写单元测试
 ```
 
