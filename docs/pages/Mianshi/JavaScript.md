@@ -54,6 +54,8 @@ set，map，promise
 
 ### 8.事件循环
 
+![](./jsImages/event_loop_01.png)
+
 ```
 宏任务：
 	script整体代码
@@ -61,9 +63,12 @@ set，map，promise
     setInterval
     I/O
     UI render
+    DOM监听
+    ajax 
+    
 微任务：
 	process.nextTick
-	
+	.then/resolve
 	Async/Await
 事件循环：
 	1.先执行整体代码，这属于宏任务；
@@ -106,12 +111,16 @@ Function.prot
 
 ### 13.原型和原型链说一下
 
+<img src="./jsImages/prototype01.png" style="zoom:50%;" />
+
 ```
 原型： 在JavaScript高级程序设计中给出的解释是· 每一个构造函数（对应的就是类函数）都有一个prototype属性（强调下是属性），这个prototype属性会指向一个原型对象（强调下是对象）。该原型属性指向的原型对象称之为原型
 	例子：比如说，一个function Foo(),他有一个prototype属性这个属性指向Foo.prototype，然后Foo.prototype的constructor指向Foo；
 
 原型链： 每一个对象都有隐式原型，指向创建该对象的构造函数的原型。对象可以通过隐式原型查找不属于该对象的属性。
 	比如：function Foo() __proto__ 是Function.prototype 的 __proto__是Object.prototype;
+原型链的顶层：
+	1.Object.prototype
 
 注意 function Function的显示原型和隐式原型都是指向Function.prototype
 ```
@@ -1218,5 +1227,15 @@ DOMContentLoaded 事件会等待 defer 的脚本执行完后才触发；
 Async：适用于那些独立的脚本，它们不依赖于其他脚本，也不被其他脚本依赖。当浏览器遇到一个async脚本时，它不会停下来等待它下载和执行，而是会继续加载HTML。一旦脚本下载完成，浏览器就会停下来执行它。这意味着，如果有多个async脚本，它们可能不会按照在HTML中的顺序执行。
 
 Defer：适用于那些依赖于DOM的脚本，或者是其他脚本依赖的脚本。当浏览器遇到一个defer脚本时，它会等到整个HTML都解析完成后才会执行这个脚本。如果有多个defer脚本，它们会按照在HTML中的顺序执行。
+```
+
+### 82.React 中怎么判断出来浏览器剩余多少空间时间?
+
+```
+```
+
+### 83.requestAnimationFrame和requestIdleCallback
+
+```
 ```
 
