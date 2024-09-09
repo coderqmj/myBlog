@@ -20,6 +20,24 @@
 使用场景：媒体播放，文本选择，触发强制动画
 ```
 
+### 3.React的setState
+
+```
+1.在 React 类组件中，为什么修改状态要使用 setState 而不是用 this.state.xxx = xxx?
+	- React是需要根据最新的state来重新渲染界面，但是这种修改方式，React并不知道数据发生变化
+	- React并没有实现Vue的监听数据变化
+	- 我们必须通过setState告诉React数据发生变化
+	- 数据确实能发生改变，但是不能重新渲染
+2.setState 函数做了哪些事情？
+	-	Component.prototype.setState实现的setState
+	- this.updater.enqueueSetState(this, partialState, callback, 'setState');
+	- setState里面调用了更新器的enqueueSetState
+	- 获取当前fiber，根据这个fiber创建一个update对象
+	- 然后把这个更新加入到更新队列里面，然后把更新队列里面的
+```
+
+
+
 ### 3.修改了state进行相关的操作
 
 ```
@@ -517,8 +535,57 @@ fiber+源码
 2.易于测试，JS对象可以写单元测试
 ```
 
-### 40.手写useState、useEffect
+## HOOKS
 
-```js
+### 1.useState原理
+
+````
+1.调用useState本质上内部调用的是dispatcher：resolveDispatcher().useState(initialState)
+2.那这个dispatcher是什么，内部有什么东西呢？第一次进来的时候是啥都没有的，所以需要挂载hooksDispatcher
+3.里面有mountState，也就是useState。
+4.mountState里面做了啥呢？
+	1.首先调用mountWorkInProgressHook生成了一个空hook，初始值，链表的next，队列等啥都是空的
+	2.然后判断当前的初始值是否为函数，如果是函数那就执行得到初始值，赋值给这个hook的记忆值（hook.memoizedState）
+	3.然后会生成一个队列，将队列放入hook中
+	4.然后生成dispatch，同时将dispatch加入queue中，也就是setState修改方法，需要把队列和当前fiber（全局对象）传进去生成
+5.如何生成dispatch？
+	1.因为需要再浏览器空闲时间才执行fiber的更新，所以生成dispatch函数里面生成了一个update，多次调用生成多个update
+	2.update里面有next属性，也就是链表结构，浏览器空闲的时候会一个一个拿出来更新
+6.执行setCount发生什么？
+	1.本质上就是执行内部的dispatchAction
+	2.首先会创建一个update，因为浏览器需要等空闲时间才能执行fiber更新，然后把update存进queue里面 
+	3.然后拿到update里面的action一个一个执行更新
+		1.执行lastRenderedReducer获取到最新的值，然后把最新的值保存下来，渲染更新
+````
+
+### 2.手写useState、useEffect
+
+```
+```
+
+### 3.函数组件重新渲染的时候怎么拿到useState之前的状态，而不是得到初始化的状态
+
+```jsx
+1.可以使用useRef
+import React, { useState, useEffect, useRef } from 'react';
+
+function App() {
+  const [count, setCount] = useState(0);
+  const prevCountRef = useRef();
+
+  useEffect(() => {
+    prevCountRef.current = count;
+  });
+
+  const prevCount = prevCountRef.current;
+
+  return (
+    <div>
+      <h1>现在的count: {count}</h1>
+      <h2>之前的count: {prevCount}</h2>
+      <button onClick={() => setCount(count + 1)}>增加count</button>
+    </div>
+  );
+}
 ```
 
