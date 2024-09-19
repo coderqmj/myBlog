@@ -11,7 +11,36 @@
 	
 	key 相同，但属性不同，只会更新属性；
 	key不同，则会销毁组件，重新创建新组件
+	
+1.首先key是ReactElement的一个属性，默认是null，如果外界传值会把值转为字符串
+2.packages/react/src/ReactElement.js 源码中有校验key的操作，对于单一元素，没有key，也不会报错
+3.在fiber的数据结构中，也有key，默认null，外界有传入就是string
+4.在React的diff算法中，key的作用是判断该节点是否可以复用，提高性能
+5.多节点diff的时候，会优先去处理更新操作，会去遍历节点，然后调用updateSlot去diff新旧fiber，生成一个新fiber
+6.如果生成新fiber为null，说明老fiber不可用，退出这一轮循环
+7.如果有新fiber，但是fiber.alternate === null说明不可复用，则需要删除这个老fiber
+8.如果遍历完子节点newChildren，则可以把剩下的老fiber都删除了，他们已经没用了
+9.如果老fiber遍历完，但是newChildren还没遍历完，说明剩下的新fiber都是新增节点，需要遍历剩下的新newChildren，创建出新fiber
 ```
+
+```
+1.如果是开发环境，会判断当前key是否合法，不过不合法，就会在控制台报错
+2.然后会去遍历新newChildren列表，然后和老fiber一起传入updateSlot去生成新fiber，不一定能生成；
+	1.updateSlot如果接收到的newChildren是number类型或者string类型：
+		1.那就需要直接更新这个文本节点，如果当前老fiber是null，那么直接创建createFiberFromText，TextFiber即可
+		2.如果当前的老fiber不为null，那就要用useFiber将老fiber和当前文本组合生成一个新fiber返回即可
+	2.如果newChild是一个对象
+		1.并且newChild.type是ReactElement的话，如果新旧key不相等，直接返回null，说明需要整个替换
+		2.如果新旧key是相等的，需要把新旧节点传进去进行updateElement操作，
+			1.如果新节点类型是Fragment，那就需要把老fiber和新节点的children传到updateFragment去更新，如果老fiber是null或者老fiber的类型不是Fragment，那就直接创建fragmentFiber即可
+			2.如果新节点的类型不是Fragment，并且oldFiber不是null：
+				1.需要对比新旧elementType是否相等，如果是相等，则使用useFiber方法将新旧节点创建出一个新fiber并返回
+			3.如果老fiber是null，那就直接使用新节点调用createFiberFromElement，创建出新fiber直接返回
+	3.如果newChild是一个数组，说明他是一个列表，就直接创建一个FragmentFiber
+3.如果updateSlot生成的新fiber是null
+```
+
+
 
 ### 2.refs的作用
 
