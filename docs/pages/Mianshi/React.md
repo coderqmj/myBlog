@@ -37,7 +37,34 @@
 				1.需要对比新旧elementType是否相等，如果是相等，则使用useFiber方法将新旧节点创建出一个新fiber并返回
 			3.如果老fiber是null，那就直接使用新节点调用createFiberFromElement，创建出新fiber直接返回
 	3.如果newChild是一个数组，说明他是一个列表，就直接创建一个FragmentFiber
-3.如果updateSlot生成的新fiber是null
+3.如果updateSlot生成的新fiber是null，并且老fiber也是null，那直接设置为下一个oldFiber，并且跳出这个循环，进入下一个循环
+4.如果生成的newFiber.alternate=null，但是oldFiber是有值的，说明没有复用节点，则直接删除oldFiber
+```
+
+### 2.React diff流程？key的作用？
+
+```
+1.React Element的类型，$$typeof: react.element | react.Fragment;  key?: string; type: 标签类型
+2.为什么需要diff，因为浏览器操作dom消耗较高，不复用，而且老是操作DOM也不行，最好是收集到一批更新一批，那页面性能就变差
+2.React16+为了优化性能，将vDOM转为fiber，将树转为链表去渲染，工作流程是先调和，再提交
+	1.调和：就是遍历节点生成新fiber的过程，给新fiber做好标记，过程可中断
+	2.提交：根据新fiber的标记，递归批量操作DOM，生成视图
+3.我们diff过程就是在调和阶段，第一次渲染是无需diff的，直接将vdom转为fiber提交即可
+4.第二次渲染的时候，会产生新的DOM，那这个新DOM就需要和oldFiber做对比，生成新fiber：
+	1.可复用就是修改标记，复用不是照搬，而是更新
+	2.剩余不可复用打上删除标记
+	3.新增的dom就会在newFiber打上新增标记
+5.diff也就是调和函数里面有两个for循环去遍历新节点：
+	1.第一次遍历，一一对比oldFiber和新节点（vdom），调用updateSlot，去生成newfiber：
+		1.updateSlot先判断传进来的节点的是否文本，判断是否number或者string就行，文本节点是没有key，所以需要判断新增还是更新，如果oldFiber==null或者不是文本节点，那需要创建一个textFiber并返回
+		2.如果是一个对象，并且是ReactElement，并且key相等，并且element.type也相等，那么就调用useFiber复用起来
+		3.如果是一个对象，并且是ReactElement，并且key不相等，那就结束第一个循环了
+		4.如果vdom处理完了，那就把老fiber节点删除就行了，
+		5.如果vdom还没有处理完（因为不相等key结束for遍历），先把剩下的oldFiber存到一个map里面，key作为key，value是fiber
+		6.然后遍历剩下的新节点，去这个map中查找是否有可以复用的
+		7.类似于updateSlot，先判断是文本节点还是ReactElement节点，文本节点没有key，所以使用index查询，查找到复用，没查找到新建
+		8.判断到当前节点是ReactElement节点，使用useFiber复用，并且将oldFiber从map删除，如果还有剩余oldFiber，则都需要删除
+		
 ```
 
 
@@ -564,6 +591,23 @@ fiber+源码
 2.易于测试，JS对象可以写单元测试
 ```
 
+### 43.React合成事件
+
+```
+1.在底层磨平不同浏览器的差异
+2.合成事件不是原生DOM事件，但它包含了原生DOM事件的引用，可以通过e.nativeEvent访问
+```
+
+### 44.单向数据流
+
+```
+1.官网上说React组件是一个树状结构，单向数据流指的是数据通过props从上往下传递
+2.个人理解：组件内部单项数据流：UI界面产生一个动作action => 修改了状态state => 体现到UI上面，这个过程是单向的
+3.Redux单向数据流：首先UI派发dispatch(action) => action传递给reducer => reducer返回新的state => 渲染UI，形成一个闭环，都是单向的
+```
+
+
+
 ## HOOKS
 
 ### 1.useState原理
@@ -617,4 +661,6 @@ function App() {
   );
 }
 ```
+
+## 三、Redux
 
