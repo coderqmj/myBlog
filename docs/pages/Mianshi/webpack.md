@@ -212,6 +212,15 @@ module.exports = {
 ### 19.模块打包运行原理
 
 ```
+一、支持Commonjs原理
+	1.webpack是模块化打包工具，可以支持各种模块化，如果不做处理，commonjs是不支持在浏览器中运行的，但是webpack打包后就支持了
+	2.我们可以通过设置devtool: "source-map"阅读一下打包后的文件，看看它到底做了什么处理
+	3.比如说通过require导入了一个sum方法，并且使用。
+	4.首先我们看打包后的源码，它导入sunm方法用的不是require函数，用的是webpack_require()函数
+	5.那这个webpack_require函数是怎么实现的呢？
+	6.他是webpack内部实现的，需要传入一个moduleId，模块Id，也就是导入文件的路径
+	7.然后它会去查找有没有这个模块的缓存的，有的话就返回，第一次肯定是没有的，所以第一次要去读取加载这个方法
+	8.webpack中是有一个webpack_modules对象的，里面的key是文件路径，value是整个文件的内容，这样就可以通过MoudleId导出并使用了
 ```
 
 ### 20.什么是source-map

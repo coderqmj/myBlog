@@ -240,12 +240,21 @@ IE盒模型应用场景：
 ### 11.BFC是什么？怎么触发？
 
 ```
-类似于一个结界，使元素内外互相不干扰不影响。
-
-触发方式：
-	1.浮动
-	3.绝对定位(absolute || fixed)
-	2.设置该元素为非visible(hidden，auto，scroll)
+1.什么是BFC？Block Formatting Context(BFC)，它是一种规则，一种决定块级元素排布的规则
+2.比如说html文档就是一个BFC，它里面的盒子就是垂直排布的，并且是贴着左边缘
+3.如何创建BFC？
+	1.html，overflow：不为visible
+	2.浮动，flex，绝对定位
+4.BFC作用是啥？解决margin折叠和高度塌陷
+5.margin折叠产生的原因
+	1.在同一个BFC中，设置的margin就是会产生折叠的，比如上下相邻的两个盒子，都设置了margin100px，最终的他两距离就是100
+	2.这个是官方规定的规则
+5.如何消除margin折叠
+	1.首先确定的是要让这两个盒子处于不同的BFC中，那样的话，BFC规则就不生效了
+	2.想要让他们处于不同的BFC，可以将任意一个盒子用div包裹，然后设置overflow：auto
+	3.这样的话，被包裹的盒子就处于overflow：auto的BFC中了，margin也就不会生效
+6.清除浮动（修复高度塌陷）
+	1.
 	
 作用：避免上下margin的传递(p131)，边界贴紧就会传递。
 margin不会左右传递

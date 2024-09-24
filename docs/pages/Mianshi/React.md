@@ -74,6 +74,20 @@ packages/react-reconciler/src/ReactChildFiber.js/reconcileChildrenArray
 		
 ```
 
+### 3.Fiber原理
+
+```
+1.React是React16引入的特性，大大提高了React页面的性能，可以更好的应用于大型复杂的项目，使用了requestIdleCallback+deadline.timeRemaining() > 1判断当前空余时间是否足够，一直在空闲时间里面不断while循环判断当当前是否需要更新.
+2.用nextUnitOfWork（下个工作单元）标记当前是否需要更新，最开始render的时候就是div根节点。
+3.如果存在用nextUnitOfWork，并且时间空闲，while循环里面会调用performUnitOfWork去调和（reconcileChildren）组件，并且返回下一个（子节点，兄弟，父亲），到while循环里面继续调和（reconcileChildren），直到performUnitOfWork返回undefined，说明所有节点都遍历过了
+4.调和子节点：调和的时候，要对比新旧Fiber是否相同的type，相同说明是更新操作。如果有子节点但是type不同，说明是一个替换或者新增操作，有旧fiber且type不同，则需要将该fiber标记为删除，并且加入删除数组中
+5.调和完所有fiber之后，就会进入提交（commit）阶段
+	1.首先遍历删除节点数组中的元素，进行commitWork，找到父元素然后将该元素的真实DOM删除：domParent.removeChild(fiber.dom);
+	2.然后从根fiber开始，递归调用commitWork，判断是更新/替换/新增操作，然后操作真实DOM
+	3.commit阶段不可中断，递归的
+6.setState也会生成nextUnitOfWork，触发fiber调和更新，而且会比较新旧DOM
+```
+
 
 
 ### 2.refs的作用

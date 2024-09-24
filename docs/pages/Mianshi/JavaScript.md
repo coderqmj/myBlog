@@ -1237,6 +1237,13 @@ Defer：适用于那些依赖于DOM的脚本，或者是其他脚本依赖的脚
 ### 83.requestAnimationFrame和requestIdleCallback
 
 ```
+都是帮助浏览器做优化的API，帮助我们的页面去提升流畅度和响应速度，但是他们是用于不同的生命周期的
+一.requestAnimationFrame
+	1.是浏览器下一次重绘之前要执行的API，一般用于处理动画的操作
+	2.能自动优化，会根据当前设备的性能自动调整回调的执行频率
+二、requestIdleCallback
+	1.它会在浏览器空闲时间执行低优先级任务的API，从而避免阻塞主线程，提升流畅度
+	2.将
 ```
 
 ### 84.JS执行流程
