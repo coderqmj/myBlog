@@ -44,6 +44,7 @@
 ### 2.React diff流程？key的作用？
 
 ```
+packages/react-reconciler/src/ReactChildFiber.js/reconcileChildrenArray
 1.React Element的类型，$$typeof: react.element | react.Fragment;  key?: string; type: 标签类型
 2.为什么需要diff，因为浏览器操作dom消耗较高，不复用，而且老是操作DOM也不行，最好是收集到一批更新一批，那页面性能就变差
 2.React16+为了优化性能，将vDOM转为fiber，将树转为链表去渲染，工作流程是先调和，再提交
@@ -60,10 +61,16 @@
 		2.如果是一个对象，并且是ReactElement，并且key相等，并且element.type也相等，那么就调用useFiber复用起来
 		3.如果是一个对象，并且是ReactElement，并且key不相等，那就结束第一个循环了
 		4.如果vdom处理完了，那就把老fiber节点删除就行了，
-		5.如果vdom还没有处理完（因为不相等key结束for遍历），先把剩下的oldFiber存到一个map里面，key作为key，value是fiber
-		6.然后遍历剩下的新节点，去这个map中查找是否有可以复用的
+		5.如果vdom还没有处理完（因为不相等key结束for遍历），比如ABCD节点更新为 ACBE节点，A在第一个循环中被复用到了，但是遍历到C的时候，发现老fiber对应的是B，所以生成的newFiber就是null了，然后需要进行第二次遍历，先把剩下的oldFiber存到一个map里面，key作为key，value是fiber
+		6.然后遍历剩下的新节点，通过updateFormMap方法，里面去查询map中查找是否有可以复用的，不管差没查到，都进入
 		7.类似于updateSlot，先判断是文本节点还是ReactElement节点，文本节点没有key，所以使用index查询，查找到复用，没查找到新建
 		8.判断到当前节点是ReactElement节点，使用useFiber复用，并且将oldFiber从map删除，如果还有剩余oldFiber，则都需要删除
+6.useFiber复用操作简单：
+	1.useFiber内部其实就是根据老fiber和新VDOM去创建一个新fiber，tag，key之类的都是复用，只有props内容使用新VDOM的
+	2.本质上就是生成一个新的fiber对象，内容只有30行代码
+7.不复用使用createFiberFromElement根据element创建全新fiber的话，它就要调用createFiberFromTypeAndProps创建
+	1.创建过程十分复杂，200多行代码
+	2.需要判断各种情况，比如你的type是函数还是字符串，还是其他类型等等，开销大
 		
 ```
 
@@ -586,7 +593,18 @@ fiber+源码
 ### 42.React为什么需要虚拟DOM
 
 ```
-1.性能优化：虚拟DOM是用JS对真实DOM的抽象描述，当组件发生变化的时候，这个时候JS创建一个新的虚拟DOM去和就的虚拟DOM对比更新就行（调和），可以避免频繁操作真实DOM带来的性能开销
+1.性能优化：虚拟DOM是用JS对真实DOM的描述，当组件发生变化的时候，这个时候JS创建一个新的虚拟DOM去和旧的虚拟DOM对比更新就行（调和），可以避免频繁操作真实DOM带来的性能开销
+2.通过document.createElement创建出来就是一个很复杂的对象,element非常大，属性巨多，频繁操作引起重排重绘
+3.比如，ul>li展示了5个数据，现在增加到10条数据，那至少要操作5次createElement，每一次创建都触发渲染，效率低
+4.我们可以对批量的操作进行合并，虚拟DOM就是一次性创建好，然后直接渲染出来，
+5.原理就是对多个DOM操作，在虚拟DOM里面体现出来，然后根据虚拟DOM的属性一次性更新到真实DOM上
+6.上面是我的理解，但是我在看React官网介绍虚拟DOM的时候，没有说这些性能优化的东西，
+	1.React官网上面说的是，虚拟DOM帮助我们从命令式编程（创建DOM）转到了声明式编程（描述DOM）
+	2.虚拟DOM是一个编程理念，UI以一种虚拟化的方式保存在内存中，并且是一个简单的JS对象
+	3.可以通过调和让虚拟DOM和真实DOM同步起来
+	4.这种编程方式赋予React声明式API
+	5.只需要告诉UI是什么状态，React去确保DOM和这些状态匹配
+	6.我们不需要操作DOM，可以从手动更改DOM、属性操作、事件处理解放出来
 2.隔离真实DOM，Ract将更新UI的逻辑（过程）与真是DOM分割
 2.易于测试，JS对象可以写单元测试
 ```
@@ -604,6 +622,20 @@ fiber+源码
 1.官网上说React组件是一个树状结构，单向数据流指的是数据通过props从上往下传递
 2.个人理解：组件内部单项数据流：UI界面产生一个动作action => 修改了状态state => 体现到UI上面，这个过程是单向的
 3.Redux单向数据流：首先UI派发dispatch(action) => action传递给reducer => reducer返回新的state => 渲染UI，形成一个闭环，都是单向的
+```
+
+### 45.React每次setState都会触发diff吗？
+
+```
+1.函数式组件是都会的，类组件不一定。
+2.类组件里面有shouldComponentUpdate，如果固定返回false，那就不会触发渲染，也就是不会触发diff
+3.SCU做优化的时候，也会去进行一个浅层比较的，浅层比较出来是false，那就不渲染，也就不会diff
+4.因为深层比较的消耗还不如重新去渲染
+```
+
+### 46.如何封装一个组件
+
+```
 ```
 
 
@@ -663,4 +695,28 @@ function App() {
 ```
 
 ## 三、Redux
+
+### 1.connect纯函数原理
+
+<img src="./ReactImages/connect_01.png" style="zoom:50%;" />
+
+```
+1.数据取用和订阅状态变化和生成action要在每个组件都操作一次，大量冗余代码
+2.所以需要一个方法将冗余代码抽离，所以需要connect高阶纯函数：
+	1.mapStateToProps 将store里面的数据共享给组件
+	2.mapDispatchToProps 将dispatch函数传给组件，让他自己完成相关操作
+    return <WrappedComponent {...this.props} // 将自己本身的属性传给组件
+                                 {...mapStateToProps(store.getState())} //将store里面数据共享给组件
+                                 {...mapDispatchToProps(store.dispatch)}/> // 将dispatch这个函数传给它，自己完成操作
+      }
+const mapStateToProps = state => ({
+  topBanners: state.recommend.topBanners
+});
+const mapDispatchToPRops = dispatch => ({
+  getBanners: () => {
+    dispatch(getTopBannerAction())
+  }
+});
+3.将组件的需要的state和action都传入props里面
+```
 
