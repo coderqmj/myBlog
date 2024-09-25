@@ -295,3 +295,9 @@ https://webpack.docschina.org/api/loaders/#pitching-loader
 DomainReplacePlugin
 ```
 
+### 25.webpack是如何根据环境变量来进行不同环境的构建，了解原理吗
+
+```
+-------------云霄项目
+```
+
