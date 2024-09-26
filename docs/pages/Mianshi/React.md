@@ -699,6 +699,30 @@ fiber+源码
 		1.执行lastRenderedReducer获取到最新的值，然后把最新的值保存下来，渲染更新
 ````
 
+### 1.useState原理
+
+```
+1.useState它其实分为两部分，首先是第一次执行和后面的执行
+0.按照顺序从上到下去执行useState去生成链表
+2.useState是在一个renderWithhooks的函数里面被执行的
+3.里面就会判断有没有fiber，没有fiber说明是第一次渲染，就需要mountState，
+4.这个mountState里面会去创建hook，是一个链表结构，里面的属性值有memoizedState，队列queue，还有下一个节点
+5.如果是第一个useState，会把新建的hook直接赋值给workInProgressHook
+6.如果是创建多个hook，会把hook用链表存起来workInProgressHook = workInProgressHook.next = hook
+7.同时也会把初始值赋值到memoizedState里面，也会把dispatch方法存入队列里面
+8.这个时候调用setState的话，首先会创建一个update的对象，但是不一定会立即执行，而是需要等到浏览器有空闲时间再去执行的
+9.如果执行多次setState的话，会把这些update存在queue队列里面的pending里面，pending也是一个链表
+10.最后有空闲的时间会调用lastRenderedReducer去执行更新，每个链表节点更新都会生成新的state，然后会把这些state存在update里面
+-----------第二次执行useState情况
+1.如果是第二次执行了，那说明是已经有fiber结构了，那就需要走update的逻辑
+2.看到updateState里面实际上是调用了updateReducer
+3.updateReducer做的事情也是把这些hook使用链表的形式链接起来，这就是为啥hook无法用if里面
+4.调用setState如何更新呢？每次调用setState的时候，实际上就是调用dispatchState，然后去创建update对象，会把这这些update存到queue里面的pending字段
+5.等到空余时间会使用do while循环去执行计算出新的state，会把state存在fiber的memoizedState里面
+```
+
+
+
 ### 2.手写useState、useEffect
 
 ```
@@ -729,6 +753,19 @@ function App() {
   );
 }
 ```
+
+### 4.React hooks为什么要用链表结构？
+
+```
+1.确保调用时序是不会改变的
+	1.如果一个组件内部很多useState，第一个是名字，第二个存了年龄，但都是调用useState，它怎么确保我在第一个取出来的正确性呢？
+	2.就是使用了链表结构，链表第一个节点存的就是name，第二个存的就是年龄。是需要一一对应的
+	3.所以我们定义hooks不能使用判断语句，会导致链表和hooks对应错乱，就出问题了
+2.链表操作的性能稍微好点
+3.
+```
+
+
 
 ## 三、Redux
 

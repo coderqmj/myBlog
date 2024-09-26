@@ -81,3 +81,40 @@
   - 如果不是空的话，需要查看优先级，然后里面do while循环去执行，计算出最新的state
   - 然后会把最新的state存在*hook*.memoizedState里面
 
+
+
+## 数据结构
+
+### 1.hook
+
+```js
+const hook = {
+  // hook的状态
+  memoizedState: null,
+
+  baseState: null,
+  baseQueue: null,
+  queue: null,
+
+  next: {// 链接的下一个hook
+    memoizedState: null,
+    baseState: null,
+    baseQueue: null,
+    queue: null,
+    next: null
+  }, 
+};
+```
+
+### 2.queue
+
+```js
+const queue: UpdateQueue<S, A> = {
+  pending: null,
+  lanes: NoLanes,
+  dispatch: null,
+  lastRenderedReducer: reducer,
+  lastRenderedState: initialState,
+};
+```
+
