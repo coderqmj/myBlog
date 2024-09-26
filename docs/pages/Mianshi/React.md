@@ -652,6 +652,28 @@ fiber+源码
 ```
 ```
 
+### 47.Fiber工作原理
+
+```
+1.React是React16引入的特性，大大提高了React页面的性能，可以更好的应用于大型复杂的项目，使用了requestIdleCallback+deadline.timeRemaining() > 1判断当前空余时间是否足够，一直在空闲时间里面不断while循环判断当当前是否需要更新.
+2.用nextUnitOfWork（下个工作单元）标记当前是否需要更新，最开始render的时候就是div根节点。
+3.如果存在用nextUnitOfWork，并且时间空闲，while循环里面会调用performUnitOfWork去调和（reconcileChildren）组件，并且返回下一个（子节点，兄弟，父亲），到while循环里面继续调和（reconcileChildren），直到performUnitOfWork返回undefined，说明所有节点都遍历过了
+4.调和子节点：调和的时候，要对比新旧Fiber是否相同的type，相同说明是更新操作。如果有子节点但是type不同，说明是一个替换或者新增操作，有旧fiber且type不同，则需要将该fiber标记为删除，并且加入删除数组中
+5.调和完所有fiber之后，就会进入提交（commit）阶段
+	1.首先遍历删除节点数组中的元素，进行commitWork，找到父元素然后将该元素的真实DOM删除：domParent.removeChild(fiber.dom);
+	2.然后从根fiber开始，递归调用commitWork，判断是更新/替换/新增操作，然后操作真实DOM
+	3.commit阶段不可中断，递归的
+6.setState也会生成nextUnitOfWork，触发fiber调和更新，而且会比较新旧DOM
+
+------------------
+1.在生成一帧图像中，用户要执行用户响应事件，键盘事件，js代码执行等等
+2.浏览器的话，一秒钟刷新60次，那么每一帧要16.66ms，
+3.如果说上面这些操作，10ms执行完了，那么就有6.6ms空余时间，这样的话就可以去执行fiber更新了
+4.这6.66ms时间到了，再把控制权交还给浏览器
+5.这样的话就可以提高资源利用，减少卡顿
+6.但是RIC是有兼容性问题的，React自己实现了Channel
+```
+
 
 
 ## HOOKS
@@ -676,6 +698,30 @@ fiber+源码
 	3.然后拿到update里面的action一个一个执行更新
 		1.执行lastRenderedReducer获取到最新的值，然后把最新的值保存下来，渲染更新
 ````
+
+### 1.useState原理
+
+```
+1.useState它其实分为两部分，首先是第一次执行和后面的执行
+0.按照顺序从上到下去执行useState去生成链表
+2.useState是在一个renderWithhooks的函数里面被执行的
+3.里面就会判断有没有fiber，没有fiber说明是第一次渲染，就需要mountState，
+4.这个mountState里面会去创建hook，是一个链表结构，里面的属性值有memoizedState，队列queue，还有下一个节点
+5.如果是第一个useState，会把新建的hook直接赋值给workInProgressHook
+6.如果是创建多个hook，会把hook用链表存起来workInProgressHook = workInProgressHook.next = hook
+7.同时也会把初始值赋值到memoizedState里面，也会把dispatch方法存入队列里面
+8.这个时候调用setState的话，首先会创建一个update的对象，但是不一定会立即执行，而是需要等到浏览器有空闲时间再去执行的
+9.如果执行多次setState的话，会把这些update存在queue队列里面的pending里面，pending也是一个链表
+10.最后有空闲的时间会调用lastRenderedReducer去执行更新，每个链表节点更新都会生成新的state，然后会把这些state存在update里面
+-----------第二次执行useState情况
+1.如果是第二次执行了，那说明是已经有fiber结构了，那就需要走update的逻辑
+2.看到updateState里面实际上是调用了updateReducer
+3.updateReducer做的事情也是把这些hook使用链表的形式链接起来，这就是为啥hook无法用if里面
+4.调用setState如何更新呢？每次调用setState的时候，实际上就是调用dispatchState，然后去创建update对象，会把这这些update存到queue里面的pending字段
+5.等到空余时间会使用do while循环去执行计算出新的state，会把state存在fiber的memoizedState里面
+```
+
+
 
 ### 2.手写useState、useEffect
 
@@ -707,6 +753,19 @@ function App() {
   );
 }
 ```
+
+### 4.React hooks为什么要用链表结构？
+
+```
+1.确保调用时序是不会改变的
+	1.如果一个组件内部很多useState，第一个是名字，第二个存了年龄，但都是调用useState，它怎么确保我在第一个取出来的正确性呢？
+	2.就是使用了链表结构，链表第一个节点存的就是name，第二个存的就是年龄。是需要一一对应的
+	3.所以我们定义hooks不能使用判断语句，会导致链表和hooks对应错乱，就出问题了
+2.链表操作的性能稍微好点
+3.
+```
+
+
 
 ## 三、Redux
 

@@ -295,3 +295,21 @@ https://webpack.docschina.org/api/loaders/#pitching-loader
 DomainReplacePlugin
 ```
 
+### 25.webpack是如何根据环境变量来进行不同环境的构建，了解原理吗
+
+```
+-------------云霄项目----------
+1.我们这个项目里面是无需webpack配置的，当然如果想要自定义也是可以的，写入yunxiao.config.js即可
+2.我们是根据执行不同的命令去生成不同的webpack配置去构建的
+3.比如开发时，执行yunxiao-script dev即可，这个yunxiao-script dev是我们在bin下面注册好的命令
+	1.注册命令：program.command('dev', '本地开发')
+	2.yunxiao-scripts-dev文件夹命名
+3.然后就会执行yunxiao-scripts-dev里面的脚本，获取当前项目的入口进行构建
+4.build同理
+5.cwd可以获取到当前app目录 const appDir = process.cwd();
+
+--------其他方式-------
+1.webpack serve --config ./config/webpack.common.js --env development
+2.webpack --config ./config/webpack.common.js --env production 
+```
+
