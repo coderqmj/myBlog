@@ -107,8 +107,10 @@ module.exports = {
 
 - 使用go语言编写的，可以直接转换成机器代码，无需经过字节码
 - ESBuild可以充分利用CPU的多内核，尽可能让他们饱和运行，会开启很多个进程
-- ESBuild所有内容都是从0编写的，而不是使用第三方的东西
+- ESBuild所有内容都是从0编写的，而不是使用第三方的东西，一开始就会考虑性能问题
 
 ## 八、Vite的脚手架
 
-安装：`npm i @vitejs/create-app -g`
+- 生成vue或者React项目模板
+
+npm create vite@latest

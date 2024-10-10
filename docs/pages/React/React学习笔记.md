@@ -2220,3 +2220,136 @@ function useLoggingLife(name) {
 
 ## 十三、React18
 
+### 1.如何升级
+
+- 可以直接 `npm i react@18 react-dom@18`，但是控制台会报错，并且也不会带来新特性对项目的性能提升
+
+![](./react18/update_react18.png)
+
+- 如何将旧版React代码跑到新架构下面呢？
+
+```jsx
+import { createRoot } from 'react-dom/client';
+const rootElement = document.getElementById('root');
+const root = createRoot(rootElement as HTMLElement);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+- 可以带来很多性能提升
+- 注意：只有使用createRoot才会自动开启并发模式，React18并不一定就是并发
+
+### 2.automatic batching 自动批量更新
+
+- 可以减少渲染次数
+
+```jsx
+// before 触发多次渲染
+<Button
+  onClick={() => {
+    setTimeout(() => {
+      setCount(2);
+      setName('3');
+    });
+  }}
+>
+  测试
+</Button>
+
+
+// react18 只会触发一次
+<Button
+  onClick={() => {
+    setTimeout(() => {
+      setCount(2);
+      setName('3');
+    });
+  }}
+>
+  测试
+</Button>
+```
+
+![](./react18/compare_autobatching.png)
+
+- React18之前支持的批量更新
+  - React Event Handler
+- React18以后
+  - React Event Handler
+  - Promise
+  - setTimeout
+  - native event handler
+- 关闭批量更新
+  - 默认都是开启的，官方不推荐关闭
+
+```js
+import { flushSync } form 'react-dom'
+
+ onClick={() => {
+    setTimeout(() => {
+      flushSync(() => setCount(2));
+      flushSync(() => setName('3'));
+    });
+  }}
+```
+
+### 3.Concurrent并发渲染模式（重点）
+
+- React18之前都是线性更新，渲染完这个才能渲染下一个，并且不能打断，只有fiber对比才能打断
+  - 一个接着一个触发渲染，commit阶段不能打断
+- React18之后
+  - 所有渲染可暂停，继续，终止
+  - 可以在后台进行
+  - 可以设置优先级
+  - 不是新功能，是一种新的底层机制
+- 如何控制台渲染优先级
+  - startTransition包裹就是降低优先级，比如输入框下面的拉取列表展示可以放里面
+  - 场景：搜索框过滤数据的时候，优先渲染搜索框用户的交互，延迟大量数据的过滤
+
+```js
+const [isPneding, startTransition] = useTransition();
+
+const handleChange=()=>{
+    /* 高优先级任务 —— 改变搜索条件 */
+    setInputValue(e.target.value)
+    /* 低优先级任务 —— 改变搜索过滤后列表状态  */
+    startTransition(()=>{
+        setSearchQuery(e.target.value)
+    })
+}
+
+```
+
+### 4.Suspense
+
+- 之前我们是如何获取数据并渲染组件的？
+  - 有两个组件，都需要获取数据并渲染。
+  - 那么理想情况下是同时获取并展示，但是目前是线性的
+  - promise.all并发如何？也不行，因为要等所有返回才能一起展示，更好的是只要一返回就展示
+- 就可以用Suspense包裹
+
+```jsx
+<Suspense fallback={<Loading />}>
+  <Biography />
+  <Panel>
+    <Albums />
+  </Panel>
+</Suspense>
+```
+
+### 5.`useDeferredValue`
+
+- 将某个状态值的更新延迟一段时间后在执行
+
+```
+  const deferredSearchTerm = useDeferredValue(searchTerm, {
+
+    timeoutMs: 1000
+
+  });
+
+```
+

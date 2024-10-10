@@ -1,4 +1,4 @@
-### 一、TypeScript的初体验
+## 一、TypeScript的初体验
 
 ### 1.1TS的环境
 
@@ -80,7 +80,7 @@ module.exports = {
 - 解决办法：
   - 在文件中写 `export {}` 
 
-### 二、Typescript基础
+## 二、Typescript基础
 
 ### 2.1变量声明
 
@@ -231,7 +231,7 @@ function foo(id: number|string) {
 }
 ```
 
-### 三、TS特性
+## 三、TS特性
 
 ### 3.1类型断言as
 
@@ -496,9 +496,7 @@ console.log(result2)
 // add({name: "why"}, {age: 18})
 ```
 
-
-
-### 四、TS类的使用
+## 四、TS类的使用
 
 ### 4.1类的定义
 

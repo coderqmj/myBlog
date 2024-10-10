@@ -197,8 +197,12 @@ module.exports = {
 ```
 概念：用于消除一些无用的代码（dead_code和一些定义但是未使用的代码），其中包括JS的Tree Shaking和css的Tree Shaking。
 
+目前有两种方案实现：
+	1.webpack中optimization中的usedExports设置为true，没用的函数标记为unused,然后Terser插件dead_code设置为true
+	2.package.json里面的sideEffects设置为false
+
 最佳实现：
-	1.最佳实践就是结合optimization中的usedExports，optimization中的minimizer中的terserOptions的dead_code，再结合package.json的副作用选项sideEffects，去尽可能消除dead_code。
+	1.最佳实践就是结合webpack中optimization中的usedExports，optimization中的minimizer中的terserOptions的dead_code，再结合package.json的副作用选项sideEffects，去尽可能消除dead_code。
 
 具体步骤：
 	1.webpack优化选项里面开启usedExports为true，这个时候去打包代码就会发现dead_code会被注释打上标记（unused code）。
@@ -207,6 +211,22 @@ module.exports = {
 		1.sideEffects: false，代表所有无效导入都是没有副作用的，可以安心删除，反正都不能删除
 		2.如果是一个数组的话，把文件路径给进去代表这里面的文件是有副作用的，但注意，需要把css的导入都加上去，否则会被消除
 		3.但是我们最优解都是sideEffects: false，然后在loader中去配置css都为sideEffects: true 。
+		
+optimization: {
+  // usedExports: 目的是标注出来哪些函数是没有被使用 unused
+  usedExports: true, // production 
+   minimizer: [
+      // 由Terser将未使用的函数, 从我们的代码中删除
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            arguments: false,
+            dead_code: true
+          },
+        }
+      })
+    ]
+}
 ```
 
 ### 19.模块打包运行原理
@@ -313,3 +333,99 @@ DomainReplacePlugin
 2.webpack --config ./config/webpack.common.js --env production 
 ```
 
+### 26.preload和prefetch的区别
+
+```
+prefetch:
+	1.当浏览器下载完关键资源有空闲时间回去进行下载需要prefetch的文件（具体的加载时间为父chunk加载完之后）
+	2.将资源设置为低优先级请求了
+	2.不会影响到关键资源的下载，体验更优
+	3.官方定义为预获取，用于将来可能会获取到的资源
+	4:场景：比如操作弹窗，需要点击触发的时候才会展示，那就可以prefetch这个组件
+	
+preload：
+	1.跟随着父脚本一起同时下载的，比如在index.js中preload一个文件，那就是跟随着index.js同时下载
+	2.属于是将资源设置为高优先级了
+	2.场景：用于提前加载一些需要的依赖
+	3.官方定义为预加载
+	
+具体区别：
+	1.prefetch是在父资源加载完成之后再加载的
+	2.preload是跟随父资源并行加载的
+	
+	1.preload是加载当前页面一定需要的资源，比如图片吧
+	2.prefetch是预先获取当前页面不一定需要的资源，比如弹窗组件JS
+	
+相同：
+	1.两种方式都不会阻塞关键资源加载
+	
+	
+总结：preload用不好会导致性能变差，就是你把不一定适用到的资源设置为preload，那么会给页面带来负担了
+	
+
+```
+
+
+
+## Vite
+
+### 1.vite和webpack的区别
+
+```
+1.vite官方的定义是下一代构建工具，是来解决之前webpack这些存在的问题的
+2.之前webpack启动服务的时候，耗时久，几十秒，HMR也需要好几秒
+3.vite构建启动的时候区分了依赖和源码，依赖一般是稳定的版本库，不怎么会变动，Vite会使用esbuild做预构建，
+4.vite = esbuld + rollup
+5.像vite就不需要对图片、ts/css/less使用loader了，无需写配置直接就支持了，而webpack它默认是处理不了css文件的。
+6.vite可以进行预打包，第一次构建的时候，对于我们的依赖是会进行预打包的，把构建好的依赖存到.vite目录下，下次打包的时候就可以复用
+7.直接支持React的JSX代码，因为esbuild直接支持
+```
+
+### 2.vite默认可以处理css，less，ts这些原理
+
+```
+1.搭建了一个服务器，你用到了哪些文件，vite服务器会帮你请求过来，比如index.less和index.ts
+2.但是浏览器是无法识别这些文件的， 所以服务器会把这些文件拦截下来做编译转化成浏览器可以使用的文件的
+3.比如css文件，就把文件内容写到变量里面，然后注入到html中
+```
+
+### 3.如何对vue做处理
+
+```
+const vue = require('@vitejs/plugin-vue');
+module.exports = {
+  plugin: [
+    vue()
+  ]
+}
+```
+
+### 4.vite为什么快
+
+```
+1.vite可以进行预打包，第一次构建的时候，对于我们的依赖是会进行预打包的，把构建好的依赖存到.vite目录下，下次打包的时候就可以复用
+2.修改的时候不会整个文件重新构建，vite服务器只会重新拉取当前修改的文件
+3.使用了ESbuild，构建速度非常快，甚至不需要缓存
+```
+
+### 5.Esbuild是啥？为啥快
+
+```
+1.相当于babel一样的功能
+2.构建速度飞快，并且无需缓存
+3.支持ES6和Commonjs的模块化
+4.支持ES6的tree shaking
+5.支持go，JS的API
+6.支持TS，JSX的编译
+7.支持Source-map
+8.支持代码压缩，支持扩展其他插件
+
+为啥快？
+1.使用go编写，可直接转换成机器码，无需经过字节码，不像JS要经过很多转换
+2.可以充分利用CPU的多内核，尽可能让他们饱和运行，会开启很多个进程
+3.ESBuild所有内容都是从0编写的，而不是使用第三方的东西，所以一开始就会考虑性能问题
+```
+
+
+
+### 

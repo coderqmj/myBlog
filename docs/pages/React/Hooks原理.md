@@ -118,3 +118,16 @@ const queue: UpdateQueue<S, A> = {
 };
 ```
 
+### 3.update
+
+```js
+const update: Update<S, A> = {
+  lane,
+  revertLane: NoLane,
+  action,
+  hasEagerState: false,
+  eagerState: null,
+  next: (null: any),
+};
+```
+

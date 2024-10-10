@@ -19,39 +19,6 @@ Promise他是解决异步编程的一种方案；
 数字：isNaN	/ typeof / constructor
 ```
 
-### 3typeof返回值
-
-```
-除了null(返回的是object)的基本类型+function+object
-```
-
-### 4map和foreach的区别
-
-```
-两者功能差不多的
-forEach不会返回结果，直接修改原来的数组
-map返回全新的数组
-```
-
-### 5.es6特性
-
-```
-let/const /字符串模板/ 箭头函数/ 函数参数默认值/ 展开运算符/解构
-set，map，promise
-```
-
-### 6. es6的类中 静态属性和构造函数谁先加载 为什么 ？
-
-```
-
-```
-
-### 7.怎么在外部调用静态属性？
-
-```
-
-```
-
 ### 8.事件循环
 
 ![](./jsImages/event_loop_01.png)
@@ -95,20 +62,6 @@ addEventListener('click',function,iscapture)
 第三个参数
 ```
 
-### 11.xss发生场景
-
-```
-全称：Cross-site scripting，代码注入
-XSS 攻击就是黑客往页面中注入恶意脚本，然后将页面的一些重要数据上传到恶意服务器。常见的三种 XSS 攻击模式是存储型 XSS 攻击、反射型 XSS 攻击和基于 DOM 的 XSS 攻击。
-```
-
-### 12.实现apply/call/bind
-
-```javascript
-//1.apply
-Function.prot
-```
-
 ### 13.原型和原型链说一下
 
 <img src="./jsImages/prototype01.png" style="zoom:50%;" />
@@ -123,18 +76,6 @@ Function.prot
 	1.Object.prototype
 
 注意 function Function的显示原型和隐式原型都是指向Function.prototype
-```
-
-### 14.说一下同源策略
-
-```
-A: 什么是同源？
-S: 同源策略是一种安全协议，即协议，域名，端口都相同
-
-A: 为什么用同源策略？
-S：没有同源策略的话，利用iframe嵌套银行的网页，将账号密码提交到他人的表单中就不安全了
-
-
 ```
 
 ### 15.new发生了什么?
@@ -234,14 +175,6 @@ js设计出来是用于操作DOM的，一个事件只能做一件事情
 	let key = [].shift.call(arguments)取出key
 	fns = this.list[key];取出key对应的回调函数
 	fns.forEach fn.apply(this, arguments);执行
-```
-
-### 25.const 数组/对象内容可以被改变
-
-```
-引用地址不改变，但内容改变
-
-对象使用 Object.freeze(obj)就可以不被改变
 ```
 
 ### 26.axios的二次封装
@@ -557,16 +490,6 @@ function throttle(fn, interval, options = { leading: true, trailing: false }) {
 
 
 
-### 37.Ajax的readystate
-
-```
-0: 未初始化，尚未调用open
-1：启用，调用 .open但是为调用.send
-2：发送，已经调用send但是未接收到响应
-3：接收，已经接收到部分数据响应
-4：完成，已经接受到全部数据，而且可以在客户端使用
-```
-
 ### 38. == 和 ===区别
 
 |                         ==                         |           ===            |
@@ -574,8 +497,6 @@ function throttle(fn, interval, options = { leading: true, trailing: false }) {
 |                   ==是非严格等于                   |      === 是严格等于      |
 | ==判断的时候会进行类型转换，然后判断两边值是否相等 | 不会进行转换，直接比较值 |
 |               undefined==null是true                |  undefined==null是false  |
-
-![1598452624096](C:\Users\邱\AppData\Roaming\Typora\typora-user-images\1598452624096.png)
 
 ### 39.for in 和 for of 的区别
 
@@ -755,9 +676,7 @@ this指向的优先级：new>显示绑定>隐式绑定>默认绑定
 ### 50.JS如何解析的
 
 ```
-1.JS源码通过Parse模块生成抽象语法树AST。
-2.AST通过Ignition模块将语法树解析成字节码。
-3.字节码进步转成汇编，机器码，最后交给CPU执行。
+
 ```
 
 ### 51.promise.all
@@ -854,12 +773,8 @@ function shuffle(arr) {
 
 ```
 我对虚拟DOM的理解是：
-
-我们对将要插入到文档的DOM树进行分析，使用js对象的形式将DOM层级情况进行描述，tagName，props，children。最后将js对象树，插入到文档中。
-
-当页面结构发生改变，需要对DOM结构进行调整，先根据变更的状态，重新构建一个对象树，然后对比两个虚拟DOM对象，记录下两个树的差异。最后将记录的差异更新到真实DOM中，这样试图就更新了。
-
-虚拟DOM在大量修改DOM的时候，可以很好的提高操作效率，通过在操作前确定需要做的最小修改，尽可能较少DOM操作带来的重排重绘。
+1.首先在vue或者React这种框架当中可以起到性能优化的作用：
+	1.虚拟DOM是用JS对真实DOM的描述，是一个对象，
 ```
 
 ### 58.快速排序
@@ -1269,5 +1184,36 @@ clg(333)
 4.计时完成之后，会把settimeout里面的函数放到事件队列里面
 5.然后全局执行栈执行完回去这事件队列里面查看有没有事件要执行，要的话就依次取出来执行
 
+```
+
+### 86.什么是闭包？应用？
+
+```
+1.闭包的定义：
+	1.foo函数执行完，按理说内部的变量会被回收，但是没有回收，被return的函数给依赖了，
+	2.脱离了该执行上下文，还能访问该上下文的变量
+2.需要一个函数，并且这个函数依赖了上层作用域的 变量
+	
+function foo() {
+  // AO: 销毁
+  var name = "foo"
+  function bar() {
+    console.log("bar", name)
+  }
+
+  return bar
+}
+
+var fn = foo()
+fn()
+
+3.应用：
+	1.排查故障：
+    1.不恰当的使用会导致内存泄露，或者消耗过多内存
+    2.比如函数内部依赖了外部数据比较大的数据，而且该函数又被多次执行，就会导致内存泄露
+  2.隐藏数据
+  	1.可以把数据变量放到函数里面，然后内部再return一个函数，把这个变量返回出去，这样外部就没法修改整个变量了
+  3.可以通过闭包实现函数缓存功能
+  	1.请求缓存就这样做的
 ```
 

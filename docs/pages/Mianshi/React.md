@@ -86,6 +86,11 @@ packages/react-reconciler/src/ReactChildFiber.js/reconcileChildrenArray
 	2.然后从根fiber开始，递归调用commitWork，判断是更新/替换/新增操作，然后操作真实DOM
 	3.commit阶段不可中断，递归的
 6.setState也会生成nextUnitOfWork，触发fiber调和更新，而且会比较新旧DOM
+
+问题：
+	1.fiber为什么可以中断：
+		- 链表结构，线性遍历的形式去对比，然后有nextUnitOfWork记录下个需要更新的节点，拿回控制权的时候就从这里继续对比
+	2.
 ```
 
 
@@ -121,8 +126,6 @@ packages/react-reconciler/src/ReactChildFiber.js/reconcileChildrenArray
 1.通过setState的第二个回调函数
 2.通过生命周期函数
 ```
-
-### 4.diff算法说一下
 
 ### 5.setState什么时候是同步的，什么时候是异步的？
 
@@ -217,15 +220,6 @@ React.createElement(标签，属性，子组件)这个函数。
 		3.返回ReactElement（虚拟DOM）
 ```
 
-### 10.React更新流程
-
-```
-props/state改变 -> render函数重新执行 -> 产生新的DOM树
--> 新旧DOM树进行diff -> 计算差异进行更新 -> 更新到真实的DOM
-```
-
-
-
 ### 11.React和Vue的差异
 
 ```
@@ -249,13 +243,6 @@ props/state改变 -> render函数重新执行 -> 产生新的DOM树
 	vue封装了很多指令：v-bind，v-for；react更多的是用原生js，更加纯粹
 ```
 
-### 12.jsx的本质/虚拟DOM的创建过程
-
-```
-jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语法糖。
-所有的jsx最终都会被转换成React.createElement的函数调用
-```
-
 ### 13.useSelector缺点？怎么解决
 
 ```
@@ -273,14 +260,6 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 	在componentDidMount订阅了store的变化，且在componentWillUnmount进行取消订阅。
 	用connect纯函数实现的
 ```
-
-### 14.纯函数connect
-
-```
-
-```
-
-
 
 ### 15.请求数据存到redux过程
 
@@ -443,7 +422,6 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 ```
 1.直接修改this.state，React是不知道数据发生变化的。
 2.因为他没有像vue中做了数据数据监听。
-3.
 ```
 
 ### 23.setState怎么实现的？
@@ -487,27 +465,14 @@ jsx 仅仅只是 React.createElement(component, props, ...children) 函数的语
 
 ```
 
-### 27.React传参方式
-
-### 28.React每次setState都会引起diff算法吗
-
-```
-不一定
-
-理由：
-	1.当进行了SCU优化时，setState之后又进行了浅层比较，有可能就是在浅层比较阶段没有深入对比下去，然后又是state里面对象没有拷贝，造成浅层比较判定值都一样。所以，setState之后，可能不会发起diff算法。
-```
-
 ### 29.RN和React的区别
 
 ```
-RN：用对应的是移动应用平台															React：渲染品台是浏览器HTML渲染
+RN：用对应的是移动应用平台															React：渲染平台是浏览器HTML渲染
 RN：都是用JSX语法进行开发，都是利用虚拟DOM这个特性
 RN：自动匹配不同手机的大小
 RN：很多css3样式不能使用box-shadow
 ```
-
-### 30.redux原理
 
 ### 31.redux dispatch之后如何引发页面渲染的
 
@@ -791,5 +756,89 @@ const mapDispatchToPRops = dispatch => ({
   }
 });
 3.将组件的需要的state和action都传入props里面
+```
+
+## 四、React18
+
+### 1.如何做升级
+
+```jsx
+1.首先升级我们的React依赖，包括react和react-dom，甚至@types/react文件也需要更新，否则导入的时候找不到会eslint报错（坑）
+2.做了依赖升级还不够，这样整个代码运行的逻辑还没有迁移到新架构上，对于app文件的创建root渲染App也要做改造
+3.React18需要通过createRoot去渲染APP，这样代码就跑在新架构上面了，就能享受到新架构带来的优化
+// 之前
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
+// React18
+import { createRoot } from 'react-dom/client';
+const root = createRoot(document.getElementById('root') as HTMLElement);
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+### 2.自动批量更新
+
+```
+1.概念：就是之前在React事件中，像Promise，settimeout中，连续的setState会触发多次更新，现在会批量更新了
+
+- React18之前支持的批量更新
+  - React Event Handler
+- React18以后
+  - React Event Handler
+  - Promise
+  - setTimeout
+  - native event handler
+```
+
+### 3.并发渲染机制
+
+```
+1.React18之前，fiber对比协调是可以打断的，但是触发commit渲染的时候是无法打断的，一把梭哈全部渲染完才行
+2.本次版本更新是React 核心渲染模型的基础性更新
+3.之前是通过一个单一的且不可中断的同步事务进行处理，一旦开始无法中断
+4.新版本当中，可以中途挂起更新，即使是挂起也会保持UI渲染一致，因为如果没计算完整个dom的话，就一直等待计算完再执行DOM变更
+5.这样的话，React就可以优先处理用户交互的渲染，而不是其他次优先级的大量渲染，这样可以给用户更好的体验
+
+6.官方说，发渲染这个方向，React 18 也仅仅只是实现最终目标的第一步，未来可以还有更多更好用的功能会更新
+```
+
+### 4.Suspense
+
+```
+1.最开始的话，Suspense只会在React.lazy懒加载的时候使用
+```
+
+### 5.useDeferredValue&startTransition
+
+```
+1.相同：两个都具有相类似的功能，都是延迟更新的功能
+2.不同：不通点就是作用的对象不同，startTransition 是作用于方法，比如该方法是生成大量数据的，用startTransition包括就可以延迟执行。useDeferredValue是延迟生成这个值，是去包裹一个值的，让这个值晚点生成去渲染，这样就可以优先渲染其他任务了
+
+// 使用了并发特性，开启并发更新
+startTransition(() => {
+  setList(new Array(10000).fill(null));
+});
+
+// 使用了并发特性，开启并发更新
+const deferredList = useDeferredValue(list);
+
+1.有并发：同样渲染10000条数据，并发模式就执行了5ms，这样就有更多的时间去布局和绘制了
+2.没有并发：渲染1w条数据的时候，JS执行了500ms，意味着页面是有卡顿的，页面阻塞了0.5s，而正常情况下需要16ms就要渲染一帧页面
+3.useDeferredValue和debounce的区别：useDeferredValue的延迟是动态的，有空余时间的时候可以执行，根据机器性能动态决定延迟时间，而debounce的话，是一个固定值，比较死
+```
+
+### 6.useId
+
+```
+1.用于在客户端和服务器上生成唯一 ID用在SSR上
+2.用这个ID可以标记已经渲染过的组件，这样就可以避免冗余渲染，节省性能
 ```
 
