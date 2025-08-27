@@ -557,19 +557,6 @@ function foo(arr) {
 }
 ```
 
-### 42.跨域
-
-```
-1.jasonp
-
-2.cors
-
-	2.判断简单请求还是复杂请求
-		简单请求必须满足两个条件：
-			1.请求方法必须是：GET，POST，PUT之一
-			2.content-type必须是：text/plain，multipart/form-data，application/x-www-form-					urlencoded之一
-```
-
 ### 43.arguments
 
 ```
@@ -769,14 +756,6 @@ function shuffle(arr) {
 }
 ```
 
-### 57.虚拟DOM
-
-```
-我对虚拟DOM的理解是：
-1.首先在vue或者React这种框架当中可以起到性能优化的作用：
-	1.虚拟DOM是用JS对真实DOM的描述，是一个对象，
-```
-
 ### 58.快速排序
 
 ```js
@@ -901,7 +880,7 @@ O(2^n)
 应用场景
 	1.React纯组件
 	2.redux中的reducer
-	3.slice就是一个纯函数，不会对原数组进行任何操作，而是生成一个新数组（splice就不是，返回新数组，也会对原数		 组进行修改）
+	3.slice就是一个纯函数，不会对原数组进行任何操作，而是生成一个新数组（splice就不是，返回新数组，也会对原数组进行修改）
 
 例子：
 副作用
@@ -909,10 +888,31 @@ O(2^n)
 
 ### 71.柯里化
 
-```
+```js
 概念：
 	1.只传递给函数一部分参数来调用它，让他返回一个函数去调用处理剩余的参数
 	2.这个过程就叫柯里化
+	
+// 柯里化函数的实现hyCurrying
+function hyCurrying(fn) {
+  function curried(...args) {
+    // 判断当前已经接收的参数的个数, 可以参数本身需要接受的参数是否已经一致了
+    // 1.当已经传入的参数 大于等于 需要的参数时, 就执行函数
+    if (args.length >= fn.length) {
+      // fn(...args)
+      // fn.call(this, ...args)
+      return fn.apply(this, args)
+    } else {
+      // 没有达到个数时, 需要返回一个新的函数, 继续来接收的参数
+      function curried2(...args2) {
+        // 接收到参数后, 需要递归调用curried来检查函数的个数是否达到
+        return curried.apply(this, args.concat(args2))
+      }
+      return curried2
+    }
+  }
+  return curried
+}
 ```
 
 ### 72.高阶函数
@@ -1096,7 +1096,7 @@ weakMap：
   const person1 = [person]; 
   person = null; 
   console.log(person1); 
-  2.这里的person1强引用了person，所以person1不会被回收，person = null; 是无效的
+  2.这里的person1强引用了person，所以person1不会被回收，person = null, 是无效的
   let person1 = new WeakMap();
   let person = { name: "张三" };
   person1.set(person, "张三"); 
@@ -1207,6 +1207,9 @@ function foo() {
 var fn = foo()
 fn()
 
+3.缺陷：内存泄露
+	1.每次用的时候，创建的闭包引用变量导致无法回收，会内存泄露 fn = null解闭包
+
 3.应用：
 	1.排查故障：
     1.不恰当的使用会导致内存泄露，或者消耗过多内存
@@ -1215,5 +1218,27 @@ fn()
   	1.可以把数据变量放到函数里面，然后内部再return一个函数，把这个变量返回出去，这样外部就没法修改整个变量了
   3.可以通过闭包实现函数缓存功能
   	1.请求缓存就这样做的
+  4.React hook也是个闭包
+  5.防抖节流
+```
+
+### 87.遍历/渲染10000条数据，如何不卡顿
+
+```js
+遍历10000条数据：
+	1.使用Web Workers多线程处理
+  self.onmessage = function(e) {
+    const data = e.data;
+    data.forEach(item => {
+        // 这里处理每一条数据
+        console.log(item);
+    });
+    self.postMessage('Processing complete');
+	};
+	const worker = new Worker('worker.js');
+	const data = new Array(10000).fill(0).map((_, i) => i);
+2.使用 Promise 和 await + settimeout进行批量异步处理
+3.requestIdleCallback
+	
 ```
 

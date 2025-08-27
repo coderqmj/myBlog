@@ -717,4 +717,107 @@ exports = module.exports;
 
 ### 8.4 XHR发送请求
 
+## 九、Proxy和Reflect
+
+### 8.1Proxy的由来
+
+- 期初都是使用`Object.defineProperty get set`去监听数据的改变和获取，但是对数据的新增和删除没有监听能力
+- 而且设计`Object.defineProperty`初衷也不是监听用的，是用来定义普通对象的属性的
+- ES6想监听对象的话，可以使用Proxy，给obj创建一个代理对象
+- 以后想操作对象属性，可以直接去操作代理对象，然后操作都能被捕获到
+
+### 8.2Proxy基本使用
+
+```js
+const obj = {
+  name: "why",
+  age: 18
+}
+
+const objProxy = new Proxy(obj, {
+  // 获取值时的捕获器
+  get: function(target, key) {
+    console.log(`监听到对象的${key}属性被访问了`, target)
+    return target[key]
+  },
+
+  // 设置值时的捕获器
+  set: function(target, key, newValue) {
+    console.log(`监听到对象的${key}属性被设置值`, target)
+    target[key] = newValue
+  },
+  
+    // 监听in的捕获器
+  has: function(target, key) {
+    console.log(`监听到对象的${key}属性in操作`, target)
+    return key in target
+  },
+
+  // 监听delete的捕获器
+  deleteProperty: function(target, key) {
+    console.log(`监听到对象的${key}属性in操作`, target)
+    delete target[key]
+  }
+})
+
+console.log(objProxy.name)
+console.log(objProxy.age)
+
+objProxy.name = "kobe"
+objProxy.age = 30
+
+console.log(obj.name)
+```
+
+### 8.3实现代理沙箱
+
+```js
+class ProxySandBox{
+    proxyWindow;
+    isRunning = false;
+    active(){
+        this.isRunning = true;
+    }
+    inactive(){
+        this.isRunning = false;
+    }
+    constructor(){
+        const fakeWindow = Object.create(null);
+        this.proxyWindow = new Proxy(fakeWindow,{
+            set:(target, prop, value, receiver)=>{
+                if(this.isRunning){
+                    target[prop] = value;
+                }
+            },
+            get:(target, prop, receiver)=>{
+                return  prop in target ? target[prop] : window[prop];
+            }
+        });
+    }
+}
+// 验证：
+let proxySandBox1 = new ProxySandBox();
+let proxySandBox2 = new ProxySandBox();
+proxySandBox1.active();
+proxySandBox2.active();
+proxySandBox1.proxyWindow.city = 'Beijing';
+proxySandBox2.proxyWindow.city = 'Shanghai';
+console.log('active:proxySandBox1:window.city:', proxySandBox1.proxyWindow.city);
+console.log('active:proxySandBox2:window.city:', proxySandBox2.proxyWindow.city);
+console.log('window:window.city:', window.city);
+proxySandBox1.inactive();
+proxySandBox2.inactive();
+console.log('inactive:proxySandBox1:window.city:', proxySandBox1.proxyWindow.city);
+console.log('inactive:proxySandBox2:window.city:', proxySandBox2.proxyWindow.city);
+console.log('window:window.city:', window.city);
+// 输出：
+// active:proxySandBox1:window.city: Beijing
+// active:proxySandBox2:window.city: Shanghai
+// window:window.city: undefined
+// inactive:proxySandBox1:window.city: Beijing
+// inactive:proxySandBox2:window.city: Shanghai
+// window:window.city: undefined
+
+
+```
 

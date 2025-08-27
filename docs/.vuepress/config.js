@@ -274,5 +274,8 @@ module.exports = {
   },
   markdown: {
     // lineNumbers: true // 代码块显示行号
+    extendMarkdown: (md) => {
+      md.use(require("markdown-it-disable-url-encode"));
+    },
   },
 };

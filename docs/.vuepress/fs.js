@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { DISABLED_PAGE } = require("./constant");
 const getFilename = () => {
   const files = fs
     .readdirSync(path.resolve(__dirname, "../pages"))
@@ -20,6 +21,9 @@ const getFilename = () => {
         sidebarDepth: 2,
       };
     });
-  return files;
+  return files.filter((item) => {
+    console.log(item);
+    return !DISABLED_PAGE.includes(item.title);
+  });
 };
 module.exports = getFilename();

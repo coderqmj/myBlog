@@ -639,6 +639,11 @@ fiber+源码
 6.但是RIC是有兼容性问题的，React自己实现了Channel
 ```
 
+### 48.实现keep-alive
+
+```
+```
+
 
 
 ## HOOKS
@@ -686,7 +691,21 @@ fiber+源码
 5.等到空余时间会使用do while循环去执行计算出新的state，会把state存在fiber的memoizedState里面
 ```
 
+### 2.为什么要有hooks，解决了什么问题？自定义hooks注意？
 
+```
+1.代码更简洁，更容易理解：相比于类组件，不管是生命周期还是维护state，使用hook的代码更简洁的代码就能完成类组件一样的功能
+2.可以逻辑复用：hook就是一个特殊函数，通过自定义hook，可以在各个组件之间共享hook的公共处理逻辑，比如useForm
+
+自定义hooks：
+	1.首先要以use开头的驼峰命名
+	2.注意
+	
+使用注意：
+	1.需要在顶层使用，而不能在条件语句中使用
+	2.需要再函数组件里面使用，不能在普通函数里面使用，想在函数中使用需要改成自定义hook形式命名
+	3.注意闭包陷阱，useState和useEffect，可能会拿不到最新的值.需要使用useRef或者setCount(count => count+1)
+```
 
 ### 2.手写useState、useEffect
 
@@ -727,7 +746,77 @@ function App() {
 	2.就是使用了链表结构，链表第一个节点存的就是name，第二个存的就是年龄。是需要一一对应的
 	3.所以我们定义hooks不能使用判断语句，会导致链表和hooks对应错乱，就出问题了
 2.链表操作的性能稍微好点
-3.
+2.如果有if语句之类的，就会导致cursor对应不上
+
+链表结构：
+	1.链表可以高效的插入和删除，在组件生命周期中，可能会频繁加入和移除hook
+	2.链表的数据结构更简单，容易理解和实现，容易维护
+	3.保证了执行顺序：可以确保执行顺序和添加顺序一致，因为使用index记录，不然会导致错乱和预期之外的逻辑
+```
+
+### 5.实现hook需要注意什么
+
+```
+```
+
+### 6.hooks闭包陷阱
+
+```JS
+1.下面代码在1s内无论点击多少次，始终都是只+1，因为该函数依赖了外部变量，形成闭包缓存了count
+2.这种情况下需要1s后setCount生效才能渲染更新
+3.如何解决：
+	1.useRef
+	2.setCount(currentCount => currentCount + 1)
+		因为回调函数内部的 currentCount 变量是函数作用域内的局部变量，不会受到外部变量的影响
+function Counter() {
+  const [count, setCount] = useState(0);
+  const handleClick = () => {
+    setTimeout(() => {
+      setCount(count + 1);
+    }, 1000);
+  };
+  const handleReset = () => {
+    setCount(0);
+  };
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={handleClick}>Increment</button>
+      <button onClick={handleReset}>Reset</button>
+    </div>
+  );
+}
+
+const handleClick = () => {
+  setTimeout(() => {
+    setCount(currentCount => currentCount + 1);
+  }, 1000);
+};
+
+// 情况二：useEffect
+1.下面代码永远都只会输出1
+useEffect(() => {
+    const timer = setInterval(() => {
+      console.log(count);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+  
+// 底层本质
+1.每次重新渲染的时候，React重新执行函数的函数体，重新调用useState这些hook重新获取状态值和更新函数
+2.更新状态的函数存在hook对象中，更新函数的闭包引用的可能是旧的状态值，
+
+```
+
+### 7.useLayoutEffect和useEffect，useInsertionEffect
+
+```
+1.useEffect的cb是异步调用的，主线程任务执行完成，DOM更新，JS执行完成，视图绘制完成，才会执行
+2.useLayoutEffect，的cb是同步执行的，执行时机是DOM更新之后，视图绘制完成之前，这个时候更方便修改DOM，这样的话，绘制只会发生一次，不然在useEffect回发生两次绘制
+3.useInsertionEffect比useLayoutEffect执行的更早一些，DOM还没更新它就会执行，一般用于CSS IN JS的处理性能问题。要是用上面两个的话，就会再次重新计算布局树了，性能浪费
+
+4.哪个和componentDidMount、update更接近：
+	1.useLayoutEffect更接近，都是同步的
 ```
 
 

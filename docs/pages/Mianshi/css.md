@@ -312,6 +312,20 @@ em:
 // sass
 1.嵌套书写样式
 
+css原生变量
+:root {
+  --main-color: black;
+}
+
+.container {
+  --main-color: blue;
+  color: var(--main-color);  /* 蓝色 */
+}
+
+.container .button {
+  color: var(--main-color);  /* 依旧蓝色 */
+}
+
 ```
 
 ### 15.css性能优化
@@ -585,5 +599,26 @@ flex: 三个值 2 2 10%;    =>  flex-grow | flex-shrink | flex-basis
 3.而如果将css放在头部，css的下载解析时可以和html的解析并行，并且会等待css下载解析完毕后开始绘制；
 
 
+```
+
+### 35.主题颜色
+
+```
+/* 亮色调默认颜色 */
+.root-light {
+  --primary-color: red;
+}
+/* 深色调默认颜色 */
+.root-dark {
+  --primary-color: blue;
+}
+
+button {
+  background-color: var(--primary-color);
+}
+
+const theme = 'dark';
+const body = document.querySelector("body");
+body.classList.add(`root-${theme}`);
 ```
 
